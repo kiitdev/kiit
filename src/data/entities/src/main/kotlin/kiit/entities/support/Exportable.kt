@@ -5,8 +5,8 @@ import kiit.entities.Entity
 import kiit.entities.features.CRUD
 import kiit.meta.kClass
 import kiit.meta.models.Model
-import kiit.results.Try
-import kiit.results.builders.Tries
+import kiit.result.Try
+import kiit.result.Tries
 
 /**
  * Created by kishorereddy on 6/3/18.
@@ -56,10 +56,10 @@ interface Exportable<TId, T> where TId : Comparable<TId>, T : Entity<TId> {
         val result = try {
             val data = mapToContent(version, schema, listOf(item))
             val export = Export(version, item.kClass.simpleName ?: "", path, "app", "", "json", 1, data, item)
-            Tries.success(export, "")
+            Tries.success(export)
         } catch (ex: Exception) {
             val message = "Error exporting item : " + item?.identity() + ". " + ex.message
-            Tries.errored<Export<T>>(Exception(message, ex))
+            Tries.rejected<Export<T>>(Exception(message, ex))
         }
         return result
     }
@@ -75,17 +75,17 @@ interface Exportable<TId, T> where TId : Comparable<TId>, T : Entity<TId> {
 
         // Available ?
         if (items == null || items.isEmpty()) {
-            return Tries.errored("No items")
+            return Tries.rejected("No items")
         }
         val item = items[0] as Entity<TId>
         val result = try {
             val path = if (items.size == 1) "get/" + item.identity() else "getAll"
             val data = mapToContent(version, schema, items)
             val export = Export(version, item.javaClass.name, path, "app", "", "json", items.size, data, items)
-            Tries.success(export, "")
+            Tries.success(export)
         } catch (ex: Exception) {
             val message = "Error exporting item : " + item.identity() + ". " + ex.message
-            Tries.errored<Export<List<T>>>(ex)
+            Tries.rejected<Export<List<T>>>(ex)
         }
         return result
     }

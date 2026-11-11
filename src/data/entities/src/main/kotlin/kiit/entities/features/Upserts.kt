@@ -1,8 +1,8 @@
 package kiit.entities.features
 
 import kiit.entities.Entity
-import kiit.results.Try
-import kiit.results.builders.Tries
+import kiit.result.Try
+import kiit.result.Tries
 
 interface Upserts<TId, T> :
     Creates<TId, T>,
@@ -35,7 +35,7 @@ interface Upserts<TId, T> :
                 }
             }
         } catch( ex:Exception ) {
-            Tries.unexpected(ex)
+            Tries.unserved(ex)
         }
     }
 
@@ -66,7 +66,7 @@ interface Upserts<TId, T> :
                 }
             }
         } catch (ex:Exception) {
-            Tries.unexpected(ex)
+            Tries.unserved(ex)
         }
     }
 
@@ -87,7 +87,7 @@ interface Upserts<TId, T> :
                 }
             }
         } catch (ex:Exception) {
-            Tries.unexpected(ex)
+            Tries.unserved(ex)
         }
     }
 }

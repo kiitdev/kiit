@@ -1,7 +1,7 @@
 package kiit.cache
 
 import kotlinx.coroutines.CompletableDeferred
-import kiit.results.Outcome
+import kiit.result.Outcome
 
 /**
  * Cache commands are sent via channels to update/manage shared state ( cache values )

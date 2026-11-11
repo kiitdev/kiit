@@ -1,6 +1,6 @@
 package kiit.tasks
 
-import kiit.results.Outcome
+import kiit.result.Outcome
 
 /**
  * Contains the full context of processing a task.

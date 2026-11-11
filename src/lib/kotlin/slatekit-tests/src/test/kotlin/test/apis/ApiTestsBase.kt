@@ -12,6 +12,7 @@ about: A Kotlin utility library, tool-kit and server backend.
  */
 package test.apis
 
+import kiit.codes.CodesToHttp
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import kiit.apis.*
@@ -37,7 +38,7 @@ import kiit.db.Db
 import kiit.entities.Entities
 import kiit.policy.hooks.Middleware
 import kiit.connectors.entities.AppEntContext
-import kiit.results.Try
+import kiit.result.Try
 import kiit.serialization.deserializer.Deserializer
 import org.json.simple.JSONObject
 import test.TestApp
@@ -122,9 +123,8 @@ open class ApiTestsBase {
             apis.executeAttempt(cmd)
         }
 
-        Assert.assertTrue(actual.code == expected.code)
+        Assert.assertTrue(actual.status == expected.status)
         Assert.assertTrue(actual.success == expected.success)
-        Assert.assertTrue(actual.desc == expected.desc)
     }
 
 
@@ -162,9 +162,8 @@ open class ApiTestsBase {
         }
 
         // Compare here.
-        Assert.assertTrue(actual.code == response.code)
+        Assert.assertTrue(CodesToHttp().toCode(actual.status) == response.code)
         Assert.assertTrue(actual.success == response.success)
-        Assert.assertTrue(actual.desc == response.desc)
         actual.onSuccess {
             Assert.assertTrue(it == response.value)
         }

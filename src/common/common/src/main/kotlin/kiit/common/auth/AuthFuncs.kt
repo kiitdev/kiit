@@ -16,8 +16,8 @@ package kiit.common.auth
 import kiit.common.info.ApiKey
 import kiit.common.values.Inputs
 import kiit.common.values.ListMap
-import kiit.results.Notice
-import kiit.results.builders.Notices
+import kiit.result.Outcome
+import kiit.result.Outcomes
 
 object AuthFuncs {
 
@@ -42,19 +42,19 @@ object AuthFuncs {
             keys: ListMap<String, ApiKey>,
             inputName: String,
             expectedRoles: String
-    ): Notice<Boolean> {
+    ): Outcome<Boolean> {
 
         val key = inputs?.getStringOrNull(inputName) ?: ""
 
         // Check 3: Key is non-empty ?
         return if (key.isNullOrEmpty()) {
-            Notices.errored("Api Key not provided or invalid")
+            Outcomes.rejected("Api Key not provided or invalid")
         } else {
             // Check 4: CHeck if valid key
             if (keys.contains(key))
                 validateKey(key, keys, expectedRoles)
             else
-                Notices.errored("Api Key not provided or invalid")
+                Outcomes.rejected("Api Key not provided or invalid")
         }
     }
 
@@ -64,15 +64,15 @@ object AuthFuncs {
      * @param actualRoles : Map of actual roles the user has.
      * @return
      */
-    fun matchRoles(expectedRole: String, actualRoles: Map<String, String>): Notice<Boolean> {
+    fun matchRoles(expectedRole: String, actualRoles: Map<String, String>): Outcome<Boolean> {
         // 1. No roles ?
         val anyRoles = actualRoles.isNotEmpty()
         return if (!anyRoles) {
-            Notices.denied()
+            Outcomes.restricted()
         }
         // 2. Any role "*"
         else if (expectedRole == Roles.ALL) {
-            if (actualRoles.isNotEmpty()) Notices.success(true) else Notices.denied()
+            if (actualRoles.isNotEmpty()) Outcomes.success(true) else Outcomes.restricted()
         } else {
             // 3. Get all roles "dev,moderator,admin"
             val expectedRoles = expectedRole.split(',')
@@ -80,9 +80,9 @@ object AuthFuncs {
             // 4. Now compare
             val matches = expectedRoles.filter { role -> actualRoles.contains(role) }
             if (matches.isNotEmpty())
-                Notices.success(true)
+                Outcomes.success(true)
             else
-                Notices.denied()
+                Outcomes.restricted()
         }
     }
 
@@ -124,7 +124,7 @@ object AuthFuncs {
         return roles.split(',').map { it to true }.toMap()
     }
 
-    private fun validateKey(key: String, keys: ListMap<String, ApiKey>, expectedRoles: String): Notice<Boolean> {
+    private fun validateKey(key: String, keys: ListMap<String, ApiKey>, expectedRoles: String): Outcome<Boolean> {
 
         // Now ensure that key contains roles matching one provided.
         val apiKey = keys[key]

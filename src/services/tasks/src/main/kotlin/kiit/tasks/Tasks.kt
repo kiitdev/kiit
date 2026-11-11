@@ -1,9 +1,9 @@
 package kiit.tasks
 
 import kiit.common.Identity
-import kiit.results.Err
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.codes.Err
+import kiit.result.Outcome
+import kiit.result.Outcomes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

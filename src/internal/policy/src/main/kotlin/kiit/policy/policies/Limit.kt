@@ -3,9 +3,9 @@ package kiit.policy.policies
 import kiit.common.log.Logger
 import kiit.policy.Policy
 import kiit.telemetry.Counters
-import kiit.results.Codes
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.codes.Failed
+import kiit.result.Outcome
+import kiit.result.Outcomes
 
 /**
  * Policy to limit the operation based on the total processed items from the metric counts
@@ -20,7 +20,7 @@ class Limit<I, O>(val limit: Long, val autoProcess:Boolean, val stats: (I) -> Co
         val pastLimit = processed >= limit
         logger?.info("LIMIT: processed = $processed")
         return if (pastLimit) {
-            Outcomes.errored(Codes.LIMITED)
+            Outcomes.unserved(Failed.Unserved.RATE_LIMITED)
         } else {
             val res = operation(i)
             if(autoProcess){

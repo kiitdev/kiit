@@ -3,7 +3,7 @@ package kiit.policy.policies
 import java.util.concurrent.atomic.AtomicLong
 import kiit.common.log.Logger
 import kiit.policy.Policy
-import kiit.results.Outcome
+import kiit.result.Outcome
 
 /**
  * Policy to call the operation supplied after every x calls

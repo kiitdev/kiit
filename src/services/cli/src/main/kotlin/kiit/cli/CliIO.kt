@@ -20,7 +20,8 @@ import kiit.common.types.ContentType
 import kiit.common.io.Files
 import kiit.common.io.IO
 import kiit.common.types.Contents
-import kiit.results.*
+import kiit.result.*
+import kiit.codes.*
 
 open class CliIO(private val io: IO<CliOutput, Unit>,
                  private val serializer:(Any?, ContentType) -> Content) : Writer {
@@ -126,15 +127,12 @@ open class CliIO(private val io: IO<CliOutput, Unit>,
         val ex = response.err
         when(ex){
             null -> { }
-            is ExceptionErr -> {
+            is StatusException -> {
                 text("ERRORS")
                 line()
-                val flattened = ex.err.flatten()
+                val flattened = ex.errors.flatMap { it.flatten() }
                 errs(flattened)
                 line()
-            }
-            is StatusException -> {
-                failure(ex.message ?: "Status error: $ex")
             }
             else -> {
                 failure(ex.message ?: "Unexpected error")
@@ -147,9 +145,9 @@ open class CliIO(private val io: IO<CliOutput, Unit>,
         all.forEachIndexed { ndx, err ->
             val num = (ndx + 1).toString()
             when(err){
-                is Err.ErrorInfo  -> failure("$num. Error   : " + err.msg)
-                is Err.ErrorField -> failure("$num. Field   : name=" + err.field + ", value=" + err.value + ", msg=" + err.msg)
-                else              -> failure("$num. ${err.msg}")
+                is Err.ErrorInfo  -> failure("$num. Error   : " + err.message)
+                is Err.ErrorField -> failure("$num. Field   : name=" + err.field + ", value=" + err.value + ", msg=" + err.message)
+                else              -> failure("$num. ${err.message}")
             }
         }
     }

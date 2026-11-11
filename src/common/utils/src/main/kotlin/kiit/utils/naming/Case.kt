@@ -14,13 +14,13 @@ interface Case {
 
 fun convertToCase(text: String, upper: Boolean, replacements: Set<Char>, replacement: Char): String {
     return text.foldIndexed("") { ndx, acc, c ->
-        val currentCharIsUpper = c.isLetter() && c.toUpperCase() == c
+        val currentCharIsUpper = c.isLetter() && c.uppercaseChar() == c
         val ch: String = if (replacements.contains(c)) {
             replacement.toString()
-        } else if (ndx > 0 && text[ndx - 1].toLowerCase() == text[ndx - 1] && currentCharIsUpper) {
-            replacement.toString() + (if (upper) c.toUpperCase() else c.toLowerCase())
+        } else if (ndx > 0 && text[ndx - 1].lowercaseChar() == text[ndx - 1] && currentCharIsUpper) {
+            replacement.toString() + (if (upper) c.uppercaseChar() else c.lowercaseChar())
         } else {
-            if (upper) c.toUpperCase().toString() else c.toLowerCase().toString()
+            if (upper) c.uppercaseChar().toString() else c.lowercaseChar().toString()
         }
         acc + ch
     }
@@ -28,17 +28,17 @@ fun convertToCase(text: String, upper: Boolean, replacements: Set<Char>, replace
 
 fun convertToCamel(text: String, upper: Boolean, replacements: Set<Char>): String {
     return text.foldIndexed("") { ndx, acc, c ->
-        val isUpper = c.toUpperCase() == c
+        val isUpper = c.uppercaseChar() == c
         val ch = if (replacements.contains(c)) {
             Char.MIN_SURROGATE
         } else if (ndx == 0 && upper) {
-            c.toUpperCase()
+            c.uppercaseChar()
         } else if (ndx == 0 && !upper) {
-            c.toLowerCase()
+            c.lowercaseChar()
         } else if (ndx > 0 && replacements.contains(text[ndx - 1])) {
-            c.toUpperCase()
-        } else if (ndx > 0 && text[ndx - 1].toLowerCase() == text[ndx - 1] && isUpper) {
-            c.toUpperCase()
+            c.uppercaseChar()
+        } else if (ndx > 0 && text[ndx - 1].lowercaseChar() == text[ndx - 1] && isUpper) {
+            c.uppercaseChar()
         } else {
             c
         }

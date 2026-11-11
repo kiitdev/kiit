@@ -3,9 +3,9 @@ package kiit.tasks
 import kiit.common.DateTimes
 import kiit.common.NOTE
 import kiit.common.ids.UUIDs
-import kiit.results.Err
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.codes.Err
+import kiit.result.Outcome
+import kiit.result.Outcomes
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
 import java.util.concurrent.atomic.AtomicLong
@@ -30,16 +30,16 @@ object Workflows {
 
     suspend fun ensure(worker: Worker, states:List<Status>, op: suspend () -> Outcome<Status> ):Outcome<Status> {
         if(worker.isFailed()) {
-            return Outcomes.errored(Err.of("Worker state = failed"))
+            return Outcomes.rejected(Err.of("Worker state = failed"))
         }
         if(worker.isCompleted()) {
-            return Outcomes.errored(Err.of("Worker state = completed"))
+            return Outcomes.rejected(Err.of("Worker state = completed"))
         }
         val state = worker.context.action.status.get()
         val currentStatus = state.status
         val matched = states.firstOrNull { it == currentStatus }
         return when(matched){
-            null -> Outcomes.errored(Err.of("Worker state = ${state.status.name}"))
+            null -> Outcomes.rejected(Err.of("Worker state = ${state.status.name}"))
             else -> op()
         }
     }
@@ -99,7 +99,7 @@ class RepeatWorkflow(context: WorkContext, worker: Worker, val scheduler: Schedu
     override suspend fun process(task: Task): Outcome<Status> {
         // Guard.
         if(worker.context.action.options.repeats == null) {
-            return Outcomes.errored(Err.of("Schedule not setup"))
+            return Outcomes.rejected(Err.of("Schedule not setup"))
         }
         // Ensure we can only run in a valid worker status.
         val validStates = listOf(Status.InActive, Status.Ready, Status.Scheduled)
@@ -139,7 +139,7 @@ class QueueWorkflow(context: WorkContext, worker: Worker) : WorkflowBase(context
     override suspend fun process(task: Task) : Outcome<Status> {
         // Guard.
         if(worker.context.queue == null) {
-            return Outcomes.errored(Err.of("Queue not setup"))
+            return Outcomes.rejected(Err.of("Queue not setup"))
         }
         // Ensure we can only run in a valid worker status.
         val validStates = listOf(Status.InActive, Status.Ready)
@@ -184,7 +184,7 @@ class QueueWorkflow(context: WorkContext, worker: Worker) : WorkflowBase(context
             }
             Outcomes.success(worker.status())
         }
-        return Outcomes.errored()
+        return Outcomes.rejected()
     }
 
     private fun canWork() : Boolean = worker.isRunning() || worker.isInActive() || worker.isReady()

@@ -2,9 +2,10 @@ package kiit.policy.policies
 
 import kiit.common.log.Logger
 import kiit.policy.Policy
-import kiit.results.*
+import kiit.result.*
+import kiit.codes.*
 import kiit.telemetry.Counters
-import kiit.results.builders.Outcomes
+import kiit.result.Outcomes
 
 /**
  * Policy to limit the operation based on the ration/threshold of Outcome.status
@@ -22,17 +23,16 @@ class Ratio<I, O>(val limit: Double, val status: Status, val stats: (I) -> Count
         val result = operation(i)
         val counts = stats(i)
         val isMatch = when (status) {
-            is Passed.Succeeded -> isAtThreshold(counts.succeeded.get(), counts.processed.get())
-            is Failed.Denied -> isAtThreshold(counts.denied.get(), counts.processed.get())
+            is Passed.Excluded -> isAtThreshold(counts.excluded.get(), counts.processed.get())
+            is Passed -> isAtThreshold(counts.succeeded.get(), counts.processed.get())
+            is Failed.Restricted -> isAtThreshold(counts.restricted.get(), counts.processed.get())
             is Failed.Invalid -> isAtThreshold(counts.invalid.get(), counts.processed.get())
-            is Failed.Ignored -> isAtThreshold(counts.ignored.get(), counts.processed.get())
-            is Failed.Errored -> isAtThreshold(counts.errored.get(), counts.processed.get())
-            is Failed.Unknown -> isAtThreshold(counts.unknown.get(), counts.processed.get())
-            else -> isAtThreshold(counts.unknown.get(), counts.processed.get())
+            is Failed.Rejected -> isAtThreshold(counts.rejected.get(), counts.processed.get())
+            is Failed.Unserved -> isAtThreshold(counts.unserved.get(), counts.processed.get())
         }
-        logger?.info("RATIO: status = ${result.status.desc}")
+        logger?.info("RATIO: status = ${result.status.title}")
         return if (isMatch) {
-            Outcomes.errored(Codes.LIMITED)
+            Outcomes.unserved(Failed.Unserved.RATE_LIMITED)
         } else {
             result
         }

@@ -1,6 +1,6 @@
 package kiit.apis
 
-import kiit.results.Outcome
+import kiit.result.Outcome
 
 
 interface Middleware {

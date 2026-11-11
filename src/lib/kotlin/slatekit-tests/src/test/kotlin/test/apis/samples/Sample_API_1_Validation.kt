@@ -15,8 +15,8 @@ package test.apis.samples
 
 import kiit.apis.*
 import kiit.common.*
-import kiit.results.Outcome
-import kiit.results.Success
+import kiit.result.Outcome
+import kiit.result.Success
 
 @Api(area = "tests", name = "validation", desc = "api to access and manage users 3", auth = AuthModes.NONE)
 class Sample_API_1_Validation() {
@@ -24,6 +24,6 @@ class Sample_API_1_Validation() {
 
     @Action(desc = "activates a users account 3")
     fun processInputs(phone: String, code: Int, isOn: Boolean, date: DateTime): Outcome<String> {
-        return Success("ok", msg = "inputs $phone, $code, $isOn, $date")
+        return Success("ok inputs $phone, $code, $isOn, $date")
     }
 }

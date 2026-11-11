@@ -3,7 +3,7 @@ package kiit.cache
 import kotlinx.coroutines.Deferred
 import kiit.common.Identity
 import kiit.common.log.Logger
-import kiit.results.Outcome
+import kiit.result.Outcome
 
 interface AsyncCache {
     /**

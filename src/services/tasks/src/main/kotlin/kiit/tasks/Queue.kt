@@ -1,7 +1,7 @@
 package kiit.tasks
 
 import kiit.common.Identity
-import kiit.results.Try
+import kiit.result.Try
 
 /**
  * Represents a simple interface for a Queue that can store Tasks which represent a unit of work.

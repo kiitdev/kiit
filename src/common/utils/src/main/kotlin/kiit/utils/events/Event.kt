@@ -1,7 +1,7 @@
 package kiit.utils.events
 
 import kiit.common.DateTime
-import kiit.results.Status
+import kiit.codes.Status
 
 /**
  * Used for diagnostics / alerts to represent some event that occurred.

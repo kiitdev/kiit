@@ -1,6 +1,6 @@
 package kiit.tasks
 
-import kiit.results.Outcome
+import kiit.result.Outcome
 
 /**
  * Convenience interface to control an @see[Action].

@@ -1,9 +1,9 @@
 package kiit.policy.hooks
 
 import kiit.common.*
-import kiit.results.Err
-import kiit.results.Failure
-import kiit.results.Outcome
+import kiit.codes.Err
+import kiit.result.Failure
+import kiit.result.Outcome
 
 /**
  * A "Filter" based middle-ware that either allows/disallows an API call to proceed

@@ -1,10 +1,12 @@
 package test.setup
 
+import kiit.codes.Failed
 import kiit.apis.Api
 import kiit.common.crypto.Encryptor
-import kiit.results.*
-import kiit.results.builders.Notices
-import kiit.results.builders.Tries
+import kiit.result.*
+import kiit.codes.*
+import kiit.result.Outcomes
+import kiit.result.Tries
 
 
 @Api(area = "samples", name = "types1", desc = "sample api to test getting different values")
@@ -21,7 +23,7 @@ class SampleTypes1Api {
     fun getBasicLong()            : Long              = 20L
     fun getBasicDouble()          : Double            = 123.45
     fun getEncrypted(text:String) : String            = enc.encrypt(text)
-    fun getResult()               : Notice<Int>       = Success(12345, msg = "result object")
+    fun getResult()               : Outcome<Int>       = Success(12345)
     fun getPair()                 : Pair<String,Long> = Pair("abc", 123)
     fun getBasicList()            : List<String>      = listOf("a", "b", "c")
     fun getBasicMap()             : Map<String,Int>   = mapOf("a" to 1, "b" to 2, "c" to 3)
@@ -32,12 +34,12 @@ class SampleTypes1Api {
      * These examples use the Slate Kit Result<T> to model success and failures.
      * The Result<T> has status codes that are HTTP compliant
      */
-    fun getSuccess()              : Notice<Movie>     = Success(Movie.samples().first())
-    fun getBadRequest()           : Notice<Movie>     = Notices.invalid("Check your inputs")
-    fun getNotFound()             : Notice<Movie>     = Notices.invalid(Err.of("Item not found"), Codes.NOT_FOUND)
-    fun getUnauthorized()         : Notice<Movie>     = Notices.denied ("You can not edit this item")
-    fun getConflict()             : Notice<Movie>     = Notices.errored("Item has already been changed", Codes.CONFLICT)
-    fun getFailure()              : Notice<Movie>     = Notices.errored("Error finding item")
-    fun getDeprecated()           : Notice<Movie>     = Notices.errored("This feature is deprecated", Codes.DEPRECATED)
-    fun getUnexpected()           : Try<Movie>        = Tries.unexpected(Exception("Unexpected errro occured"))
+    fun getSuccess()              : Outcome<Movie>     = Success(Movie.samples().first())
+    fun getBadRequest()           : Outcome<Movie>     = Outcomes.invalid("Check your inputs")
+    fun getNotFound()             : Outcome<Movie>     = Outcomes.invalid(Err.of("Item not found"), Failed.Invalid.NOT_FOUND)
+    fun getUnauthorized()         : Outcome<Movie>     = Outcomes.restricted("You can not edit this item")
+    fun getConflict()             : Outcome<Movie>     = Outcomes.rejected("Item has already been changed", Failed.Rejected.CONFLICT)
+    fun getFailure()              : Outcome<Movie>     = Outcomes.rejected("Error finding item")
+    fun getDeprecated()           : Outcome<Movie>     = Outcomes.rejected("This feature is deprecated", Failed.Rejected("DEPRECATED", "Deprecated"))
+    fun getUnexpected()           : Try<Movie>        = Tries.unserved(Exception("Unexpected errro occured"))
 }

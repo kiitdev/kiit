@@ -2,10 +2,10 @@ package kiit.policy.policies
 
 import kotlinx.coroutines.delay
 import kiit.policy.Policy
-import kiit.results.Failure
-import kiit.results.Outcome
-import kiit.results.Success
-import kiit.results.builders.Tries
+import kiit.result.Failure
+import kiit.result.Outcome
+import kiit.result.Success
+import kiit.result.Tries
 import kiit.telemetry.Counter
 
 /**
@@ -17,7 +17,7 @@ class Retry<I, O>(val retries: Int, val delayMillis: Long) : Policy<I, O> {
     val counts = Counter()
 
     override suspend fun run(i: I, operation: suspend (I) -> Outcome<O>): Outcome<O> {
-        val r = Tries.of { operation(i) }
+        val r = Tries.attempt { operation(i) }
         val attempts = counts.inc()
         return when(r) {
             is Success -> r.value

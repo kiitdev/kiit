@@ -1,10 +1,11 @@
 package kiit.telemetry
 
 import kiit.utils.events.Event
-import kiit.results.*
+import kiit.result.*
+import kiit.codes.*
 
 /**
- * Handles the various success / failures statuses represented in the @see[kiit.results.Status]
+ * Handles the various success / failures statuses represented in the @see[kiit.codes.Status]
  */
 open class Events<TRequest, TResponse, TFailure>(
     override val tags: List<Tag> = listOf(),
@@ -21,7 +22,12 @@ open class Events<TRequest, TResponse, TFailure>(
     }
 
 
-    open fun denied(sender: Any, request: TRequest, error:Failure<TFailure>) {
+    open fun excluded(sender: Any, request: TRequest, response:TResponse) {
+        handleSuccess(sender, request, response)
+    }
+
+
+    open fun restricted(sender: Any, request: TRequest, error:Failure<TFailure>) {
         handleFailure(sender, request, error)
     }
 
@@ -31,17 +37,12 @@ open class Events<TRequest, TResponse, TFailure>(
     }
 
 
-    open fun ignored(sender: Any, request: TRequest, error:Failure<TFailure>) {
+    open fun rejected(sender: Any, request: TRequest, error:Failure<TFailure>) {
         handleFailure(sender, request, error)
     }
 
 
-    open fun errored(sender: Any, request: TRequest, error:Failure<TFailure>) {
-        handleFailure(sender, request, error)
-    }
-
-
-    open fun unexpected(sender: Any, request: TRequest, error:Failure<TFailure>) {
+    open fun unserved(sender: Any, request: TRequest, error:Failure<TFailure>) {
         handleFailure(sender, request, error)
     }
 
@@ -49,11 +50,10 @@ open class Events<TRequest, TResponse, TFailure>(
     open fun custom(sender: Any, name:String, request: TRequest, error:Failure<TFailure>) {}
 
 
-    fun denied    (sender:Any, request: TRequest, error:TFailure)  = denied    (sender, request, Failure(error))
-    fun invalid   (sender:Any, request: TRequest, error:TFailure)  = invalid   (sender, request, Failure(error))
-    fun ignored   (sender:Any, request: TRequest, error:TFailure)  = ignored   (sender, request, Failure(error))
-    fun errored   (sender:Any, request: TRequest, error:TFailure)  = errored   (sender, request, Failure(error))
-    fun unexpected(sender:Any, request: TRequest, error:TFailure)  = unexpected(sender, request, Failure(error))
+    fun restricted(sender:Any, request: TRequest, error:TFailure)  = restricted(sender, request, Failure(error, Failed.Restricted.DEFAULT))
+    fun invalid   (sender:Any, request: TRequest, error:TFailure)  = invalid   (sender, request, Failure(error, Failed.Invalid.DEFAULT))
+    fun rejected  (sender:Any, request: TRequest, error:TFailure)  = rejected  (sender, request, Failure(error, Failed.Rejected.DEFAULT))
+    fun unserved  (sender:Any, request: TRequest, error:TFailure)  = unserved  (sender, request, Failure(error, Failed.Unserved.DEFAULT))
 
 
     protected fun handleSuccess(sender:Any, request: TRequest, response:TResponse){
@@ -79,18 +79,16 @@ open class Events<TRequest, TResponse, TFailure>(
         when(result) {
             is Success -> {
                 when(result.status){
-                    is Passed.Succeeded -> this.succeeded(sender, request, result.value)
-                    is Passed.Pending   -> this.succeeded(sender, request, result.value)
+                    is Passed.Excluded  -> this.excluded(sender, request, result.value)
+                    else                -> this.succeeded(sender, request, result.value)
                 }
             }
             is Failure -> {
                 when (result.status) {
-                    is Failed.Denied     -> this.denied    (sender, request, result)
+                    is Failed.Restricted -> this.restricted(sender, request, result)
                     is Failed.Invalid    -> this.invalid   (sender, request, result)
-                    is Failed.Ignored    -> this.ignored   (sender, request, result)
-                    is Failed.Errored    -> this.errored   (sender, request, result)
-                    is Failed.Unknown    -> this.unexpected(sender, request, result)
-                    else                 -> this.unexpected(sender, request, result)
+                    is Failed.Rejected   -> this.rejected  (sender, request, result)
+                    is Failed.Unserved   -> this.unserved  (sender, request, result)
                 }
             }
         }

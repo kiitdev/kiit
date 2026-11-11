@@ -13,6 +13,8 @@
 
 package kiit.connectors.cli
 
+import kiit.common.CliCodes
+import kiit.codes.CodesToHttp
 import kiit.apis.ApiServer
 import kiit.apis.core.Part
 import kiit.apis.routes.Routes
@@ -25,10 +27,8 @@ import kiit.common.types.Content
 import kiit.common.types.ContentType
 import kiit.requests.InputArgs
 import kiit.context.Context
-import kiit.results.Codes
-import kiit.results.Status
-import kiit.results.Success
-import kiit.results.Try
+import kiit.result.Success
+import kiit.result.Try
 import kiit.utils.writer.ConsoleWriter
 
 /**
@@ -77,13 +77,13 @@ open class CliApi(
                 CliResponse(
                     request,
                     true,
-                    Codes.HELP.name,
-                    Status.toType(Codes.HELP),
-                    Codes.HELP.code,
+                    CliCodes.HELP.name,
+                    CliCodes.HELP.group,
+                    CodesToHttp().toCode(CliCodes.HELP),
                     mapOf(),
                     args.line
                 ),
-                Codes.HELP
+                CliCodes.HELP
             )
         } else {
             // Supply the api-key into each command.

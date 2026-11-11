@@ -6,8 +6,9 @@ import kiit.apis.Middleware
 import kiit.apis.routes.Call
 import kiit.apis.routes.MethodExecutor
 import kiit.meta.KTypes
-import kiit.results.*
-import kiit.results.builders.Outcomes
+import kiit.result.*
+import kiit.codes.*
+import kiit.result.Outcomes
 import kiit.serialization.deserializer.Deserializer
 import org.json.simple.JSONObject
 import kotlin.reflect.KCallable

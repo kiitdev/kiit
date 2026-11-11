@@ -11,7 +11,7 @@
 
 package kiit.core.queues
 
-import kiit.results.Try
+import kiit.result.Try
 
 
 /**
@@ -72,7 +72,7 @@ interface Queue<T> {
      * Completes the items ( essentially removing it from the queue )
      * Basically an ack ( acknowledgement )
      */
-    fun done(entries: List<QueueEntry<T>>?): kiit.results.Result<String, List<Pair<QueueEntry<T>, Throwable>>> {
+    fun done(entries: List<QueueEntry<T>>?): kiit.result.Result<String, List<Pair<QueueEntry<T>, Throwable>>> {
         return completeAllSync(entries) { done(it) }
     }
 

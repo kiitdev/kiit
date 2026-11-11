@@ -13,6 +13,8 @@
 
 package slate.test
 
+import kiit.codes.Passed
+import kiit.common.CliCodes
 import kiit.apis.setup.ApiSetup
 import kiit.apis.setup.api
 import kiit.apis.setup.routes
@@ -31,9 +33,9 @@ import kiit.common.info.Host
 import kiit.common.types.Contents
 import kiit.connectors.cli.CliApi
 import kiit.connectors.entities.AppEntContext
-import kiit.results.Codes
-import kiit.results.Status
-import kiit.results.getOrElse
+import kiit.codes.Codes
+import kiit.codes.Status
+import kiit.result.getOrElse
 import kiit.serialization.Serialization
 import org.junit.Ignore
 import test.TestApp
@@ -49,7 +51,7 @@ class ShellTests  {
       val result = runBlocking { cli.executeText("app.version.host") }
 
       val res = result.getOrElse {
-        CliResponse( CliRequest.build(Args.empty(), ""),true, Status.toType(Codes.SUCCESS), Codes.SUCCESS.name, 1, mapOf(), "" )
+        CliResponse( CliRequest.build(Args.empty(), ""),true, Passed.Succeeded.SUCCESS.group, Passed.Succeeded.SUCCESS.name, 1, mapOf(), "" )
       }
       val req = res.request
       Assert.assertTrue( req.area == "app" )
@@ -64,8 +66,8 @@ class ShellTests  {
     @Test fun can_handle_help() {
       val cli = getCli()
       val result = runBlocking { cli.executeText("?") }
-      Assert.assertTrue( result.code == Codes.HELP.code )
-      Assert.assertTrue( result.desc  == Codes.HELP.desc)
+      Assert.assertTrue( result.status.name == CliCodes.HELP.name )
+      Assert.assertTrue( result.status.title == CliCodes.HELP.title)
     }
 
 
@@ -73,8 +75,8 @@ class ShellTests  {
       val cli = getCli()
       val result = runBlocking {  cli.executeText("app ?") }
       //Assert.assertTrue( result.getOrElse { null } == null )
-      Assert.assertTrue( result.code == Codes.HELP.code )
-      Assert.assertTrue( result.desc  == Codes.HELP.desc)
+      Assert.assertTrue( result.status.name == CliCodes.HELP.name )
+      Assert.assertTrue( result.status.title == CliCodes.HELP.title)
     }
 
 
@@ -82,8 +84,8 @@ class ShellTests  {
       val cli = getCli()
       val result = runBlocking { cli.executeText("app.info ?") }
       //Assert.assertTrue( result.getOrElse { null } == null )
-      Assert.assertTrue( result.code == Codes.HELP.code )
-      Assert.assertTrue( result.desc  == Codes.HELP.desc)
+      Assert.assertTrue( result.status.name == CliCodes.HELP.name )
+      Assert.assertTrue( result.status.title == CliCodes.HELP.title)
     }
 
 
@@ -91,8 +93,8 @@ class ShellTests  {
       val cli = getCli()
       val result = runBlocking { cli.executeText("app.version.host ?") }
       //Assert.assertTrue( result.getOrElse { null } == null )
-      Assert.assertTrue( result.code == Codes.HELP.code )
-      Assert.assertTrue( result.desc  == Codes.HELP.desc)
+      Assert.assertTrue( result.status.name == CliCodes.HELP.name )
+      Assert.assertTrue( result.status.title == CliCodes.HELP.title)
     }
 
 

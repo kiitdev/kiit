@@ -9,8 +9,8 @@ import com.amazonaws.services.dynamodbv2.document.PrimaryKey
 import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec
 import kiit.core.docs.CloudDocs
-import kiit.results.builders.Outcomes
-import kiit.results.Outcome
+import kiit.result.Outcomes
+import kiit.result.Outcome
 
 /**
  * Conversion to/from no sql
@@ -38,7 +38,7 @@ class AwsCloudDocs<TEntity, TPartition, TCluster>(
     private val table = dynamoDB.getTable(tableName)
 
     override fun create(entity: TEntity): Outcome<TEntity> {
-        return Outcomes.of {
+        return Outcomes.attempt {
             val item = mapper.toDoc(entity)
             table.putItem(item)
             entity
@@ -46,11 +46,11 @@ class AwsCloudDocs<TEntity, TPartition, TCluster>(
     }
 
     override fun update(entity: TEntity): Outcome<TEntity> {
-        return Outcomes.errored(Exception("DynamoDB.update : Not implemented"))
+        return Outcomes.rejected(Exception("DynamoDB.update : Not implemented"))
     }
 
     override fun delete(entity: TEntity): Outcome<TEntity> {
-        return Outcomes.of {
+        return Outcomes.attempt {
             val keys = mapper.keys(entity)
             val spec = DeleteItemSpec().withPrimaryKey(PrimaryKey(partitionName, keys.first, clusterName, keys.second))
             table.deleteItem(spec)
@@ -63,7 +63,7 @@ class AwsCloudDocs<TEntity, TPartition, TCluster>(
     }
 
     override fun get(partition: TPartition, cluster: TCluster): Outcome<TEntity> {
-        return Outcomes.of {
+        return Outcomes.attempt {
             val spec = GetItemSpec().withPrimaryKey(partitionName, partition, clusterName, cluster)
             val item = table.getItem(spec)
             val entity = mapper.ofDoc(item, partition, cluster)

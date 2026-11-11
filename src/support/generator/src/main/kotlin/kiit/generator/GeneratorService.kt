@@ -4,9 +4,9 @@ import kiit.common.conf.Conf
 import kiit.common.log.Logger
 import kiit.utils.writer.ConsoleWriter
 import kiit.context.Context
-import kiit.results.Success
-import kiit.results.Try
-import kiit.results.builders.Tries
+import kiit.result.Success
+import kiit.result.Try
+import kiit.result.Tries
 import java.io.File
 
 /**
@@ -25,7 +25,7 @@ class GeneratorService(val context: Context,
     val currentDir = System.getProperty("user.dir")
 
     fun generate(setupCtx: GeneratorContext, template: Template): Try<GeneratorResult> {
-        return Tries.of {
+        return Tries.attempt {
             // Normalize/Canonical names
             val ctx = setupCtx.normalize(settings)
 

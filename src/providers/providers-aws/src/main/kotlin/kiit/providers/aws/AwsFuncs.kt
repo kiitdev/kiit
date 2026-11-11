@@ -21,8 +21,8 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.sqs.AmazonSQSClient
 import kiit.common.conf.Config
-import kiit.results.Try
-import kiit.results.builders.Tries
+import kiit.result.Try
+import kiit.result.Tries
 
 /**
  * Gets the region from the name
@@ -55,7 +55,7 @@ fun <T> build(region: String, op: (Regions) -> T): Try<T> {
     val regions = region.toRegion()
     return when (regions) {
         null -> Tries.invalid("Invalid region: $region")
-        else -> Tries.of { op(regions) }
+        else -> Tries.attempt { op(regions) }
     }
 }
 
@@ -63,7 +63,7 @@ fun <T> build(region: String, op: (Regions) -> T): Try<T> {
  * See: https://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html
  */
 fun formatBucket(name: String): String {
-    return name.trim().replace("_", "-").toLowerCase()
+    return name.trim().replace("_", "-").lowercase()
 }
 
 object AwsFuncs {

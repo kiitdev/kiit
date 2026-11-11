@@ -7,8 +7,9 @@ import kiit.meta.KTypes
 import kiit.meta.Reflector
 import kiit.requests.InputArgs
 import kiit.requests.Request
-import kiit.results.Err
-import kiit.results.ExceptionErr
+import kiit.codes.Err
+import kiit.codes.Failed
+import kiit.codes.StatusException
 import kiit.serialization.deserializer.DecodeUtils
 import kiit.serialization.deserializer.Deserializer
 import org.json.simple.JSONObject
@@ -133,8 +134,9 @@ open class JsonDeserializer(
             catch(ex:Exception) {
                 val errValue = req.data.getStringOrNull(paramName)
                 val errField = Err.on(paramName, errValue ?: "", "Invalid value", ex)
-                val errList = Err.ErrorList(listOf(errField), ex.message ?: "Invalid value")
-                throw ExceptionErr("Error while converting parameters", errList)
+                throw StatusException.InvalidException(
+                    Failed.Invalid.INVALID_VALUE, "Error while converting parameters", listOf(errField), ex
+                )
             }
             inputs.add(result)
         }

@@ -20,9 +20,9 @@ import kiit.requests.CommonRequest
 import kiit.common.Source
 import kiit.context.AppContext
 import kiit.requests.toResponse
-import kiit.results.Err
-import kiit.results.Failure
-import kiit.results.Success
+import kiit.codes.Err
+import kiit.result.Failure
+import kiit.result.Success
 import test.apis.samples.Sample_API_1_Protocol
 
 /**
@@ -44,7 +44,7 @@ class Api_Protocol_Tests : ApiTestsBase() {
             routes = routes(listOf(api(Sample_API_1_Protocol::class, Sample_API_1_Protocol()))),
             user = null,
             request = CommonRequest.path("$AREA.$NAME.${Sample_API_1_Protocol::processParent.name}", Verbs.POST, mapOf(), mapOf(Pair("name", "abc"))),
-            response = Success("ok", msg = "via parent:abc").toResponse()
+            response = Success("ok via parent:abc").toResponse()
         )
     }
 
@@ -56,7 +56,7 @@ class Api_Protocol_Tests : ApiTestsBase() {
             routes = routes(listOf(api(Sample_API_1_Protocol::class, Sample_API_1_Protocol()))),
             user = null,
             request = CommonRequest.path("$AREA.$NAME.${Sample_API_1_Protocol::processCLI.name}", Verbs.POST, mapOf(), mapOf(Pair("name", "abc"))),
-            response = Success("ok", msg = "via cli:abc").toResponse()
+            response = Success("ok via cli:abc").toResponse()
         )
     }
 
@@ -68,7 +68,7 @@ class Api_Protocol_Tests : ApiTestsBase() {
             routes = routes(listOf(api(Sample_API_1_Protocol::class, Sample_API_1_Protocol()))),
             user = null,
             request = CommonRequest.path("$AREA.$NAME.${Sample_API_1_Protocol::processParent.name}", Verbs.POST, mapOf(), mapOf(Pair("name", "abc"))),
-            response = Success("ok", msg = "via parent:abc").toResponse()
+            response = Success("ok via parent:abc").toResponse()
         )
     }
 
@@ -79,7 +79,7 @@ class Api_Protocol_Tests : ApiTestsBase() {
             routes = routes(listOf(api(Sample_API_1_Protocol::class, Sample_API_1_Protocol()))),
             user     = null,
             request  = CommonRequest.path("$AREA.$NAME.${Sample_API_1_Protocol::processCLI.name}",  Verbs.POST, mapOf(), mapOf(Pair("name", "abc"))),
-            response = Success("ok", msg = "via cli:abc").toResponse()
+            response = Success("ok via cli:abc").toResponse()
         )
     }
 
@@ -91,7 +91,7 @@ class Api_Protocol_Tests : ApiTestsBase() {
             routes = routes(listOf(api(Sample_API_1_Protocol::class, Sample_API_1_Protocol()))),
             user = null,
             request = CommonRequest.api("$AREA", "$NAME", "${Sample_API_1_Protocol::processCLI.name}", Verbs.POST, mapOf(), mapOf(Pair("name", "abc"))),
-            response = Failure(Err.of("expected source cli, but got api"), msg = "Errored").toResponse(),
+            response = Failure(Err.of("expected source cli, but got api"), kiit.codes.Failed.Rejected.DEFAULT).toResponse(),
             checkFailMsg = true
         )
     }

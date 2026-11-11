@@ -12,8 +12,8 @@
 package kiit.cache
 
 import kotlinx.coroutines.runBlocking
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.result.Outcome
+import kiit.result.Outcomes
 import kiit.telemetry.*
 import java.util.concurrent.atomic.AtomicReference
 
@@ -70,7 +70,7 @@ data class CacheEntry(
      * invalidates the current item by setting its expiry to to current time
      */
     fun expire(): Outcome<Boolean> {
-        return Outcomes.of {
+        return Outcomes.attempt {
             val expired = item.get().expire()
             item.set(expired)
             expired.expiry.isExpired()
@@ -90,7 +90,7 @@ data class CacheEntry(
             Outcomes.success(true)
         } catch (ex: Exception) {
             failure(ex)
-            Outcomes.errored(ex)
+            Outcomes.rejected(ex)
         }
     }
 

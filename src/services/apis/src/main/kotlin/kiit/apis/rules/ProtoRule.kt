@@ -5,9 +5,9 @@ import kiit.apis.Verb
 import kiit.apis.Verbs
 import kiit.common.Source
 import kiit.requests.Request
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
-import kiit.results.flatMap
+import kiit.result.Outcome
+import kiit.result.Outcomes
+import kiit.result.flatMap
 
 object ProtoRule : Rule {
 
@@ -37,7 +37,7 @@ object ProtoRule : Rule {
             source == Source.API -> {
                 when(actionVerb.isMatch(req.verb)) {
                     true -> Outcomes.success(request)
-                    false -> Outcomes.denied("Incorrect verb, expected=${actionVerb.name}, actual=${req.verb}")
+                    false -> Outcomes.restricted("Incorrect verb, expected=${actionVerb.name}, actual=${req.verb}")
                 }
             }
 
@@ -48,7 +48,7 @@ object ProtoRule : Rule {
             source == Source.All -> Outcomes.success(request)
 
             // Case 5: invalid
-            else -> Outcomes.errored("expected verb $actionVerb, but got ${req.verb}")
+            else -> Outcomes.rejected("expected verb $actionVerb, but got ${req.verb}")
         }
     }
 
@@ -58,7 +58,7 @@ object ProtoRule : Rule {
             actionProtocols.isMatchOrAll(requestProtocol) -> Outcomes.success(request)
             else -> {
                 val oneOf = actionProtocols.all.joinToString { it.id }
-                Outcomes.errored("expected source $oneOf, but got ${req.source.id}")
+                Outcomes.rejected("expected source $oneOf, but got ${req.source.id}")
             }
         }
     }

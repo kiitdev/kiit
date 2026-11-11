@@ -1,6 +1,6 @@
 package kiit.utils.paged
 
-import kiit.results.Outcome
+import kiit.result.Outcome
 
 data class PagedState<TOffset, TValue>(
     val batch: Long,

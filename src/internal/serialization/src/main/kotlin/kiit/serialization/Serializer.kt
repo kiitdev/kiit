@@ -13,8 +13,11 @@
 
 package kiit.serialization
 
-import kiit.results.Result
-import kiit.results.getOrElse
+import kiit.codes.CodesToHttp
+import kiit.codes.Err
+import kiit.result.Failure
+import kiit.result.Result
+import kiit.result.getOrElse
 //import java.time.*
 import org.threeten.bp.*
 import org.threeten.bp.format.*
@@ -103,7 +106,7 @@ open class Serializer(
             is Unit -> buff.append("null")
             is Char -> buff.append(serializeString(s.toString()))
             is String -> buff.append(serializeString(s))
-            is Boolean -> buff.append(s.toString().toLowerCase())
+            is Boolean -> buff.append(s.toString().lowercase())
             is Short -> buff.append(s.toString())
             is Int -> buff.append(s.toString())
             is Long -> buff.append(s.toString())
@@ -169,6 +172,18 @@ open class Serializer(
         onContainerEnd(item, ParentType.MAP_TYPE, depth)
     }
 
+    private val httpCodes = CodesToHttp()
+
+    /** Message for a result: the error message for a failure, otherwise the status title. */
+    private fun resultMessage(item: Result<*, *>): String = when (item) {
+        is Failure -> when (val e = item.error) {
+            is Err -> e.message
+            is Throwable -> e.message ?: item.status.title
+            else -> item.status.title
+        }
+        else -> item.status.title
+    }
+
     /**
      * recursive serialization for a object.
      *
@@ -183,8 +198,8 @@ open class Serializer(
 
             // Entry
             onMapItem(item, depth, 0, "success", item.success)
-            onMapItem(item, depth, 1, "code", item.code)
-            onMapItem(item, depth, 2, "msg", item.desc)
+            onMapItem(item, depth, 1, "code", httpCodes.toCode(item.status))
+            onMapItem(item, depth, 2, "msg", resultMessage(item))
             onMapItem(item, depth, 3, "value", item.getOrElse { null })
 
             // End

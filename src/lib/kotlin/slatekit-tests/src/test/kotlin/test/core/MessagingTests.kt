@@ -49,12 +49,12 @@ class MessagingTests {
     }
 
 
-//    class IOTest : IO<HttpRequest, Notice<Boolean>> {
+//    class IOTest : IO<HttpRequest, Outcome<Boolean>> {
 //
 //        var lastRequest:HttpRequest ? = null
 //
 //
-//        override fun run(input: HttpRequest): Notice<Boolean> {
+//        override fun run(input: HttpRequest): Outcome<Boolean> {
 //            lastRequest = input
 //            return Success(true)
 //        }

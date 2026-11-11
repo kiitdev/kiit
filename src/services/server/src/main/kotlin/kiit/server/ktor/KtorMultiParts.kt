@@ -7,8 +7,8 @@ import io.ktor.http.content.streamProvider
 import io.ktor.server.request.receiveMultipart
 import kiit.common.types.*
 import kiit.requests.Request
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.result.Outcome
+import kiit.result.Outcomes
 import java.io.InputStream
 
 object KtorMultiParts {

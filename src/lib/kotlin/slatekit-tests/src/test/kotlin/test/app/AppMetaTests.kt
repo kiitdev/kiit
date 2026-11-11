@@ -11,6 +11,8 @@
 
 package slate.test
 
+import kiit.codes.Status
+import kiit.common.CliCodes
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Test
@@ -18,7 +20,7 @@ import kiit.common.*
 import kiit.common.info.About
 import kiit.app.App
 import kiit.app.AppRunner
-import kiit.results.Codes
+import kiit.codes.Codes
 import test.TestApp
 
 
@@ -26,21 +28,21 @@ class AppMetaTests  {
 
 
   @Test fun can_request_help() {
-    checkHelp(arrayOf("help", "-help", "--help", "/help", "?"), Codes.HELP.code, "help")
+    checkHelp(arrayOf("help", "-help", "--help", "/help", "?"), CliCodes.HELP, "help")
   }
 
 
   @Test fun can_request_about() {
-    checkHelp(arrayOf("about", "-about", "--about", "/about", "info"), Codes.ABOUT.code, "help")
+    checkHelp(arrayOf("about", "-about", "--about", "/about", "info"), CliCodes.ABOUT, "help")
   }
 
 
   @Test fun can_request_version() {
-    checkHelp(arrayOf("version", "-version", "--version", "/version", "ver"), Codes.VERSION.code,  "help")
+    checkHelp(arrayOf("version", "-version", "--version", "/version", "ver"), CliCodes.VERSION,  "help")
   }
 
 
-  fun checkHelp(words:Array<String>, code:Int, msg:String) {
+  fun checkHelp(words:Array<String>, expected:Status, msg:String) {
     runBlocking {
       for (word in words) {
         val result = AppRunner.run(
@@ -49,7 +51,7 @@ class AppMetaTests  {
                 about = About.none,
                 builder = { ctx -> App(ctx) }
         )
-        Assert.assertEquals(code, result.code)
+        Assert.assertEquals(expected.name, result.status.name)
       }
     }
   }

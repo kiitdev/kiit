@@ -20,8 +20,8 @@ import kiit.common.io.Uris
 import kiit.common.log.Logs
 import kiit.common.log.LogsDefault
 import kiit.context.AppContext
-import kiit.results.builders.Tries
-import kiit.results.getOrElse
+import kiit.result.Tries
+import kiit.result.getOrElse
 import java.util.*
 
 /**
@@ -126,7 +126,7 @@ object AppBuilder {
      * Builds the build info file
      */
     fun build(cls:Class<*>, args: Args, alias: Alias = Alias.Jar): Build {
-        val result = Tries.of {
+        val result = Tries.attempt {
             val source = dir(args, alias)
             val name = "build.conf"
             val props = Props.fromUri(cls, source.combine(name))
@@ -142,7 +142,7 @@ object AppBuilder {
      * Gets the build info file
      */
     fun build(cls:Class<*>, loc:Uri): Build {
-        val result = Tries.of {
+        val result = Tries.attempt {
             val uri = loc.combine("build.conf")
             val props = Props.fromUri(cls, uri)
             val stamp = Config(cls, uri, props, null)

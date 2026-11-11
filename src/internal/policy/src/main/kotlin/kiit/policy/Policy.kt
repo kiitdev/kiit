@@ -1,6 +1,6 @@
 package kiit.policy
 
-import kiit.results.Outcome
+import kiit.result.Outcome
 
 /**
  * @param I : Input type

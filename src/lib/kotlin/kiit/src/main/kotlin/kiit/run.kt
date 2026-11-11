@@ -13,8 +13,8 @@ import kiit.context.AppContext
 import kiit.db.Db
 import kiit.generator.Help
 import kiit.providers.logback.LogbackLogs
-import kiit.results.Failure
-import kiit.results.Success
+import kiit.result.Failure
+import kiit.result.Success
 
 
 /**

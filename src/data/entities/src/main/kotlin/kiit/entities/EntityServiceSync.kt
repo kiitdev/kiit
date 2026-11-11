@@ -11,8 +11,8 @@ import kiit.meta.Reflector
 import kiit.meta.kClass
 import kiit.query.Op
 import kiit.query.Order
-import kiit.results.Try
-import kiit.results.builders.Tries
+import kiit.result.Try
+import kiit.result.Tries
 import java.util.*
 import kotlin.reflect.KProperty
 
@@ -98,7 +98,7 @@ open class EntityServiceSync<TId, T>(val repo: EntityRepo<TId, T>)
      * @return
      */
     fun createAsTry(entity: T): Try<TId> {
-        return Tries.of {
+        return Tries.attempt {
             create(entity)
         }
     }
@@ -160,7 +160,7 @@ open class EntityServiceSync<TId, T>(val repo: EntityRepo<TId, T>)
      * @return
      */
     fun updateAsTry(entity: T): Try<Boolean> {
-        return Tries.of { update(entity) }
+        return Tries.attempt { update(entity) }
     }
 
     /**
@@ -224,18 +224,18 @@ open class EntityServiceSync<TId, T>(val repo: EntityRepo<TId, T>)
                     false -> {
                         val finalEntity = applyFieldData(DataAction.Create, item)
                         val id = repo().create(finalEntity)
-                        if (isCreated(id)) Tries.success(id) else Tries.errored("Error creating item")
+                        if (isCreated(id)) Tries.success(id) else Tries.rejected("Error creating item")
                     }
                     true -> {
                         val finalEntity = applyFieldData(DataAction.Update, item)
                         val updated = repo().update(finalEntity)
-                        if (updated) Tries.success(finalEntity.identity()) else Tries.errored("Error updating item")
+                        if (updated) Tries.success(finalEntity.identity()) else Tries.rejected("Error updating item")
                     }
                 }
                 saveResult
-            } ?: Tries.errored("Entity not provided")
+            } ?: Tries.rejected("Entity not provided")
         } catch (ex: Exception) {
-            Tries.errored<TId>(ex)
+            Tries.rejected<TId>(ex)
         }
         return result
     }
@@ -472,7 +472,7 @@ open class EntityServiceSync<TId, T>(val repo: EntityRepo<TId, T>)
      * @return
      */
     fun deleteAsTry(entity: T): Try<Boolean> {
-        return Tries.of { delete(entity) }
+        return Tries.attempt { delete(entity) }
     }
 
     /**
@@ -644,7 +644,7 @@ open class EntityServiceSync<TId, T>(val repo: EntityRepo<TId, T>)
                 }
             }
         } catch( ex:Exception ) {
-            Tries.unexpected(ex)
+            Tries.unserved(ex)
         }
     }
 
@@ -675,7 +675,7 @@ open class EntityServiceSync<TId, T>(val repo: EntityRepo<TId, T>)
                 }
             }
         } catch (ex:Exception) {
-            Tries.unexpected(ex)
+            Tries.unserved(ex)
         }
     }
 
@@ -696,7 +696,7 @@ open class EntityServiceSync<TId, T>(val repo: EntityRepo<TId, T>)
                 }
             }
         } catch (ex:Exception) {
-            Tries.unexpected(ex)
+            Tries.unserved(ex)
         }
     }
 }

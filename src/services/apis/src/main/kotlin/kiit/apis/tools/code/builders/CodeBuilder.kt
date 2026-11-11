@@ -57,7 +57,7 @@ interface CodeBuilder {
             val cls = tpe.classifier as KClass<*>
             if (Reflector.isSlateKitEnum(cls)) {
                 buildTypeName(KTypes.KIntType)
-            } else if (cls == kiit.results.Result::class) {
+            } else if (cls == kiit.result.Result::class) {
                 val genType = tpe.arguments[0].type!!
                 val finalType = buildTypeName(genType)
                 finalType

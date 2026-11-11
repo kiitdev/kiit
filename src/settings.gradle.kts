@@ -19,7 +19,3 @@ rootProject.name = "kiit"
 // Pattern:
 //   include(":core-result")
 //   project(":core-result").projectDir = file("core/result")
-
-// core
-include(":core-codes")
-project(":core-codes").projectDir = file("core/codes")

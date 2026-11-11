@@ -10,8 +10,9 @@ import kiit.policy.Policy
 import kiit.telemetry.Calls
 import kiit.telemetry.Counters
 import kiit.policy.policies.*
-import kiit.results.*
-import kiit.results.builders.Outcomes
+import kiit.result.*
+import kiit.codes.*
+import kiit.result.Outcomes
 
 class Policy_Tests {
 
@@ -41,8 +42,8 @@ class Policy_Tests {
             policy.run("3") { Outcomes.of(it.toInt()) }
         }
         Assert.assertFalse(result.success)
-        Assert.assertTrue(result.status is Failed.Errored)
-        Assert.assertEquals(result.code, Codes.LIMITED.code)
+        Assert.assertTrue(result.status is Failed.Unserved)
+        Assert.assertEquals(Failed.Unserved.RATE_LIMITED, result.status)
     }
 
 
@@ -72,8 +73,8 @@ class Policy_Tests {
             policy.run("3") { calls.inc(); Outcomes.of(it.toInt()) }
         }
         Assert.assertFalse(result.success)
-        Assert.assertTrue(result.status is Failed.Errored)
-        Assert.assertEquals(result.code, Codes.LIMITED.code)
+        Assert.assertTrue(result.status is Failed.Unserved)
+        Assert.assertEquals(Failed.Unserved.RATE_LIMITED, result.status)
     }
 
 
@@ -104,7 +105,7 @@ class Policy_Tests {
             policy.run("3") { value = it.toInt(); Outcomes.of(it.toInt()) }
         }
         Assert.assertFalse(result.success)
-        Assert.assertTrue(result.status is Failed.Ignored)
+        Assert.assertEquals(Failed.Rejected.PRECONDITION_FAILED, result.status)
         Assert.assertEquals(2, value)
     }
 
@@ -112,10 +113,10 @@ class Policy_Tests {
     @Test
     fun test_ratio_success(){
         val counts = Counters(Identity.test("kiit", "policy"))
-        val policy: Policy<String, Int> = Ratio(.4, Failed.Denied(Codes.DENIED.name, 0, ""), { counts })
+        val policy: Policy<String, Int> = Ratio(.4, Failed.Restricted.DENIED, { counts })
         val result = runBlocking {
             policy.run("1") { counts.processed.inc(); counts.succeeded.inc(); Outcomes.of(it.toInt()) }
-            policy.run("2") { counts.processed.inc(); counts.denied.inc(); Outcomes.of(it.toInt()) }
+            policy.run("2") { counts.processed.inc(); counts.restricted.inc(); Outcomes.of(it.toInt()) }
             policy.run("3") { counts.processed.inc(); counts.succeeded.inc(); Outcomes.of(it.toInt()) }
         }
         Assert.assertTrue(result.success)
@@ -127,15 +128,15 @@ class Policy_Tests {
     @Test
     fun test_ratio_failure(){
         val counts = Counters(Identity.test("kiit", "policy"))
-        val policy: Policy<String, Int> = Ratio(.5, Failed.Denied(Codes.DENIED.name, 0, ""), { counts })
+        val policy: Policy<String, Int> = Ratio(.5, Failed.Restricted.DENIED, { counts })
         val result = runBlocking {
             policy.run("1") { counts.processed.inc(); counts.succeeded.inc(); Outcomes.of(it.toInt()) }
-            policy.run("2") { counts.processed.inc(); counts.denied.inc(); Outcomes.of(it.toInt()) }
-            policy.run("3") { counts.processed.inc();counts.denied.inc(); Outcomes.of(it.toInt()) }
+            policy.run("2") { counts.processed.inc(); counts.restricted.inc(); Outcomes.of(it.toInt()) }
+            policy.run("3") { counts.processed.inc();counts.restricted.inc(); Outcomes.of(it.toInt()) }
         }
         Assert.assertFalse(result.success)
-        Assert.assertTrue(result.status is Failed.Errored)
-        Assert.assertEquals(result.code, Codes.LIMITED.code)
+        Assert.assertTrue(result.status is Failed.Unserved)
+        Assert.assertEquals(Failed.Unserved.RATE_LIMITED, result.status)
     }
 
 
@@ -152,7 +153,7 @@ class Policy_Tests {
         val result = runBlocking { call("1"); call("2"); }
         Assert.assertTrue(result.success)
         Assert.assertTrue(result.status is Passed.Succeeded)
-        Assert.assertEquals(result.code, Codes.SUCCESS.code)
+        Assert.assertEquals(Passed.Succeeded.SUCCESS, result.status)
         Assert.assertEquals(2, result.getOrElse { -1 })
         Assert.assertEquals(2, calls.totalRuns())
         Assert.assertEquals(2, counts.processed.get())
@@ -184,7 +185,7 @@ class Policy_Tests {
         }
         Assert.assertTrue(result.success)
         Assert.assertTrue(result.status is Passed.Succeeded)
-        Assert.assertEquals(result.code, Codes.SUCCESS.code)
+        Assert.assertEquals(Passed.Succeeded.SUCCESS, result.status)
         Assert.assertEquals(2, result.getOrElse { -1 })
         Assert.assertEquals(2, calls.totalRuns())
         Assert.assertEquals(2, counts.processed.get())
@@ -202,7 +203,7 @@ class Policy_Tests {
             policy.run("2") { value = it.toInt(); Outcomes.of(it.toInt()) }
         }
         Assert.assertFalse(result.success)
-        Assert.assertTrue(result.status is Failed.Ignored)
+        Assert.assertEquals(Failed.Rejected.PRECONDITION_FAILED, result.status)
         Assert.assertEquals(1, value)
     }
 
@@ -222,16 +223,16 @@ class Policy_Tests {
 
         runBlocking {
             val result1 = policy.run("1") { value = it.toInt(); Outcomes.of(it.toInt()) }
-            check(result1, false, Codes.IGNORED, -1)
+            check(result1, false, Failed.Rejected.PRECONDITION_FAILED, -1)
 
             val result2 = policy.run("2") { value = it.toInt(); Outcomes.of(it.toInt()) }
-            check(result2, false, Codes.IGNORED, -1)
+            check(result2, false, Failed.Rejected.PRECONDITION_FAILED, -1)
 
             val result3 = policy.run("3") { value = it.toInt(); Outcomes.of(it.toInt()) }
-            check(result3, false, Codes.IGNORED, -1)
+            check(result3, false, Failed.Rejected.PRECONDITION_FAILED, -1)
 
             val result4 = policy.run("4") { value = it.toInt(); Outcomes.of(it.toInt()) }
-            check(result4, true, Codes.SUCCESS, 4)
+            check(result4, true, Passed.Succeeded.SUCCESS, 4)
         }
     }
 
@@ -251,16 +252,16 @@ class Policy_Tests {
 
         runBlocking {
             val result1 = policy.run("1") { value = it.toInt(); Outcomes.of(it.toInt()) }
-            check(result1, false, Codes.IGNORED, -1)
+            check(result1, false, Failed.Rejected.PRECONDITION_FAILED, -1)
 
             val result2 = policy.run("2") { value = it.toInt(); Outcomes.of(it.toInt()) }
-            check(result2, true, Codes.SUCCESS, 2)
+            check(result2, true, Passed.Succeeded.SUCCESS, 2)
 
             val result3 = policy.run("3") { value = it.toInt(); Outcomes.of(it.toInt()) }
-            check(result3, false, Codes.IGNORED, 2)
+            check(result3, false, Failed.Rejected.PRECONDITION_FAILED, 2)
 
             val result4 = policy.run("4") { value = it.toInt(); Outcomes.of(it.toInt()) }
-            check(result4, true, Codes.SUCCESS, 4)
+            check(result4, true, Passed.Succeeded.SUCCESS, 4)
         }
     }
 

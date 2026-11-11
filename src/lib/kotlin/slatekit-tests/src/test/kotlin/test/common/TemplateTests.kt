@@ -18,8 +18,8 @@ import kiit.utils.templates.TemplateConstants.TypeSub
 import kiit.utils.templates.*
 import kiit.utils.templates.TemplateConstants.TypeText
 import kiit.common.utils.Random
-import kiit.results.Success
-import kiit.results.Try
+import kiit.result.Success
+import kiit.result.Try
 
 /**
  * Created by kishorereddy on 6/3/17.

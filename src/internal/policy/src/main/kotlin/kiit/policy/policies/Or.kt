@@ -1,9 +1,9 @@
 package kiit.policy.policies
 
 import kiit.policy.Policy
-import kiit.results.Failure
-import kiit.results.Outcome
-import kiit.results.Success
+import kiit.result.Failure
+import kiit.result.Outcome
+import kiit.result.Success
 import java.util.concurrent.atomic.AtomicLong
 
 /**

@@ -11,6 +11,7 @@
 
 package kiit.app
 
+import kiit.common.CliCodes
 import kiit.common.args.Args
 import kiit.common.args.ArgsSchema
 import kiit.context.Context
@@ -19,8 +20,9 @@ import kiit.common.envs.Envs
 import kiit.common.info.About
 import kiit.common.io.Alias
 import kiit.common.log.Logs
-import kiit.results.*
-import kiit.results.builders.Tries
+import kiit.result.*
+import kiit.codes.*
+import kiit.result.Tries
 
 object AppRunner {
 
@@ -68,17 +70,17 @@ object AppRunner {
         // STEP 5: Build App - Create App using supplied lambda and context
         // STEP 6: Run App   - Finally run the application with workflow ( init, exec, end )
         val result = argsResult.then { args -> AppHelp.process(cls, source, rawArgs.toList(), args, about, schema) }
-            .then { args    -> Tries.of { AppUtils.context(cls, args, envs, enc, logs, source) } }
-            .then { context -> Tries.of { context.copy(args = ArgsSchema.transform(schema, context.args)) } }
+            .then { args    -> Tries.attempt { AppUtils.context(cls, args, envs, enc, logs, source) } }
+            .then { context -> Tries.attempt { context.copy(args = ArgsSchema.transform(schema, context.args)) } }
             .then { context -> validate(context.args, schema).map { context } }
-            .then { context -> Tries.of { builder(context) } }
+            .then { context -> Tries.attempt { builder(context) } }
             .then { app     -> run(app) }
 
         result.onFailure {
-            when(result.code) {
-                Codes.ABOUT.code   -> {}
-                Codes.HELP.code    -> {}
-                Codes.VERSION.code -> {}
+            when(result.status.name) {
+                CliCodes.ABOUT.name   -> {}
+                CliCodes.HELP.name    -> {}
+                CliCodes.VERSION.name -> {}
                 else               -> {
                     when (errorMode) {
                         ErrorMode.Throw -> throw it
@@ -97,7 +99,7 @@ object AppRunner {
      * Run the app using the workflow init -> execute -> end
      */
     suspend fun <C : Context> run(app: App<C>): Try<Any?> {
-        val result = Tries.of {
+        val result = Tries.attempt {
             // Welcome Banner + init + create app directories
             if (app.options.showWelcome) { app.banner.welcome() }
             app.init()
@@ -141,8 +143,8 @@ object AppRunner {
 
     private fun showError(result: Try<Any?>, ex: Throwable?) : Try<Any?> {
         println("success: " + result.success)
-        println("code   : " + result.code)
-        println("message: " + result.desc)
+        println("status : " + result.status.name)
+        println("message: " + result.status.title)
         ex?.let {
             println("error  : " + ex.message)
             val count = Math.min(10, ex.stackTrace.size)

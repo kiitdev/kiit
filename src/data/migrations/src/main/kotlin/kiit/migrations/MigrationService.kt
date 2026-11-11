@@ -22,11 +22,12 @@ import kiit.data.sql.vendors.SqlDDLBuilder
 import kiit.data.sql.vendors.SqlDDLGroup
 import kiit.entities.Entities
 import kiit.entities.core.EntityContext
-import kiit.results.Notice
-import kiit.results.Success
-import kiit.results.Try
-import kiit.results.builders.Tries
-import kiit.results.getOrElse
+import kiit.result.Outcome
+import kiit.result.Outcomes
+import kiit.result.Success
+import kiit.result.Try
+import kiit.result.Tries
+import kiit.result.getOrElse
 
 /**
  * Created by kreddy on 3/23/2016.
@@ -61,15 +62,15 @@ class MigrationService(
         val err = "Unable to install, can not generate sql for model $name"
 
        return when (result) {
-            is kiit.results.Success -> {
+            is kiit.result.Success -> {
                 val db = entities.builder.db(dbKey, dbShard)
                 result.value.forEach {
                     if (!it.isNullOrEmpty()) { db.update(it) }
                 }
-                kiit.results.Success("Installed all tables")
+                kiit.result.Success("Installed all tables")
             }
-            is kiit.results.Failure -> {
-                kiit.results.Failure(result.error, msg = err)
+            is kiit.result.Failure -> {
+                kiit.result.Failure(result.error, result.status)
             }
         }
     }
@@ -125,7 +126,7 @@ class MigrationService(
      */
     fun generateSqlAllInstall(schemaFilePrefixes:List<Pair<String,String>> = listOf()): Try<String> {
         if(folders == null) {
-            return Tries.errored("Folders not provided")
+            return Tries.rejected("Folders not provided")
         }
 
         // 1. Get all the entities ( Context which has the Model containing schema names )
@@ -146,7 +147,7 @@ class MigrationService(
             val statements = listOf(schemaDDL)
             write(schema, statements, "sql-install", schemaFilePrefixes)
         }
-        return kiit.results.Success(folders.pathToOutputs)
+        return kiit.result.Success(folders.pathToOutputs)
     }
 
 
@@ -168,7 +169,7 @@ class MigrationService(
      */
     fun generateSqlAllUninstall(schemaFilePrefixes:List<Pair<String,String>> = listOf()): Try<String> {
         if(folders == null) {
-            return Tries.errored("Folders not provided")
+            return Tries.rejected("Folders not provided")
         }
 
         // 1. Get all the entities ( Context which has the Model containing schema names )
@@ -195,7 +196,7 @@ class MigrationService(
             val statements = schemaDDL.statements
             write(schema, statements, "sql-remove", schemaFilePrefixes)
         }
-        return kiit.results.Success(folders.pathToOutputs)
+        return kiit.result.Success(folders.pathToOutputs)
     }
 
     fun deleteAll(): Try<List<String>> {
@@ -239,19 +240,19 @@ class MigrationService(
         val sql = result.third
         val path = result.second
         val info = if (success) "generated sql for model: $moduleName $path" else "error generating sql"
-        return if (success) kiit.results.Success(sql, msg = info) else kiit.results.Failure(Exception(info), msg = info)
+        return if (success) kiit.result.Success(sql) else kiit.result.Failure(Exception(info))
     }
 
-    fun connection(): Notice<DbCon> {
+    fun connection(): Outcome<DbCon> {
         return dbs?.let { dbs ->
-            kiit.results.Success(dbs.default() ?: DbCon.empty)
-        } ?: kiit.results.Failure("no db setup")
+            kiit.result.Success(dbs.default() ?: DbCon.empty)
+        } ?: Outcomes.rejected("no db setup")
     }
 
-    fun connectionByName(name: String): Notice<DbCon> {
+    fun connectionByName(name: String): Outcome<DbCon> {
         return dbs?.let { dbs ->
-            kiit.results.Success(dbs.named(name) ?: DbCon.empty)
-        } ?: kiit.results.Failure("no db setup")
+            kiit.result.Success(dbs.named(name) ?: DbCon.empty)
+        } ?: Outcomes.rejected("no db setup")
     }
 
     private fun write(schema:String, statements:List<String>, prefixDefault:String,  schemaFilePrefixes:List<Pair<String,String>> = listOf()): String {
@@ -273,18 +274,23 @@ class MigrationService(
         return try {
             val db = entities.getDb()
             db.update(sql)
-            kiit.results.Success("Operation $operationName successful on $table")
+            kiit.result.Success("Operation $operationName successful on $table")
         } catch (ex: Exception) {
-            kiit.results.Failure(ex, msg = "Unable to delete :$table. ${ex.message}")
+            kiit.result.Failure(Exception("Unable to delete :$table. ${ex.message}", ex))
         }
     }
 
     private fun each(operation: (EntityContext) -> Try<String>): Try<List<String>> {
         val results = entities.getEntities().map { operation(it ) }
         val success = results.all { it.success }
-        val messages = results.map { it.desc ?: "" }
+        val messages = results.map {
+            when (it) {
+                is kiit.result.Success -> it.value
+                is kiit.result.Failure -> it.error.message ?: ""
+            }
+        }
         val error = if (success) "" else messages.joinToString(newline)
-        return if (success) kiit.results.Success(messages, msg = "") else kiit.results.Failure(Exception(error), msg = error)
+        return if (success) kiit.result.Success(messages) else kiit.result.Failure(Exception(error))
     }
 
     private fun builder(name:String):SqlDDLBuilder {

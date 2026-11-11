@@ -15,7 +15,8 @@ import kiit.utils.templates.Templates
 import kiit.common.values.Vars
 import kiit.http.HttpRPC
 import kiit.comms.common.TemplateSender
-import kiit.results.*
+import kiit.result.*
+import kiit.codes.*
 
 abstract class EmailService(
         override val templates: Templates? = null,

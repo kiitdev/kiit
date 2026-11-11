@@ -36,7 +36,7 @@ sealed class AppCmd(val names: List<String>) {
          */
         @JvmStatic
         fun parse(raw: String): AppCmd {
-            val text = raw.trim().toLowerCase()
+            val text = raw.trim().lowercase()
             return when {
                 Help.isMatch(text) -> Help
                 Version.isMatch(text) -> Version

@@ -12,7 +12,7 @@
 package kiit.policy.hooks
 
 import kiit.common.*
-import kiit.results.Outcome
+import kiit.result.Outcome
 
 /**
  * A middle-ware that handles the request

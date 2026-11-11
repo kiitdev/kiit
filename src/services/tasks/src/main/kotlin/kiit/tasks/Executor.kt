@@ -1,9 +1,9 @@
 package kiit.tasks
 
 import kiit.common.DateTimes
-import kiit.results.Err
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.codes.Err
+import kiit.result.Outcome
+import kiit.result.Outcomes
 import kotlin.reflect.KCallable
 
 
@@ -25,7 +25,7 @@ class Executor {
             val ended = DateTimes.now()
             ExecutionResult(Stats(started, ended), outcome)
         } catch (ex:Exception) {
-            val outcome = Outcomes.unexpected<String>(Err.of("action=${action.fullName}", ex))
+            val outcome = Outcomes.unserved<String>(Err.of("action=${action.fullName}", ex))
             val ended = DateTimes.now()
             println("event=TASK_FAILED, name=${task.name}, id=${task.uuid}, message=${ex.message}")
             ExecutionResult(Stats(started, ended), outcome)
@@ -54,7 +54,7 @@ class Executor {
             ExecutionResult(Stats(started, ended), outcome)
         } catch (ex:Exception) {
             println("event=TASK_FAILED, name=${task.name}, id=${task.uuid}, message=${ex.message}")
-            val outcome = Outcomes.unexpected<String>(Err.of("action=${action.fullName}, message=${ex.message}", ex))
+            val outcome = Outcomes.unserved<String>(Err.of("action=${action.fullName}, message=${ex.message}", ex))
             val ended = DateTimes.now()
             ExecutionResult(Stats(started, ended), outcome)
         }

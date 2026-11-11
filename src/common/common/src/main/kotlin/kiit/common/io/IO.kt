@@ -11,17 +11,17 @@
 
 package kiit.common.io
 
-import kiit.results.Outcome
-import kiit.results.Try
-import kiit.results.builders.Outcomes
-import kiit.results.builders.Tries
+import kiit.result.Outcome
+import kiit.result.Try
+import kiit.result.Outcomes
+import kiit.result.Tries
 
 
 interface IO<in I, out O> {
 
     fun perform(i: I): O
-    fun attempt(i:I): Try<O> = Tries.of { perform(i) }
-    fun outcome(i:I): Outcome<O> = Outcomes.of { perform(i) }
+    fun attempt(i:I): Try<O> = Tries.attempt { perform(i) }
+    fun outcome(i:I): Outcome<O> = Outcomes.attempt { perform(i) }
 }
 
 

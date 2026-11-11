@@ -1,11 +1,11 @@
 package kiit.utils.smartvalues
 
-import kiit.results.Err
-import kiit.results.Outcome
-import kiit.results.Try
-import kiit.results.Failure
-import kiit.results.Success
-import kiit.results.builders.Tries
+import kiit.codes.Err
+import kiit.result.Outcome
+import kiit.result.Try
+import kiit.result.Failure
+import kiit.result.Success
+import kiit.result.Tries
 
 abstract class SmartCreation<T : SmartValue> {
 
@@ -23,7 +23,7 @@ abstract class SmartCreation<T : SmartValue> {
      * Creates the SmartString if valid, throws an exception otherwise
      * NOTE: This should be avoided in favor of the more functional
      * [outcome] and [attempt] methods below. Those rely on the
-     * [kiit.results.Result] component however.
+     * [kiit.result.Result] component however.
      * This is here for completeness and to allow for various approaches
      */
     fun of(text: String): T {
@@ -35,7 +35,7 @@ abstract class SmartCreation<T : SmartValue> {
     }
 
     /**
-     * Functional version to return an Outcome<T> = kiit.results.Result<T, Err>
+     * Functional version to return an Outcome<T> = kiit.result.Result<T, Err>
      */
     fun outcome(text: String?): Outcome<T> {
         val result = validate(text)
@@ -46,10 +46,10 @@ abstract class SmartCreation<T : SmartValue> {
     }
 
     /**
-     * * Functional version to return an Try<T> = kiit.results.Result<T, Exception>
+     * * Functional version to return an Try<T> = kiit.result.Result<T, Exception>
      */
     fun attempt(text: String?): Try<T> {
-        return Tries.of {
+        return Tries.attempt {
             val result = validate(text)
             when (result.first) {
                 true -> create(text ?: "")

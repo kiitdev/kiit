@@ -13,7 +13,7 @@ import kiit.core.common.FileUtils
 import kiit.core.files.CloudFileEntry
 import kiit.core.files.CloudFiles
 import kiit.http.HttpRPC
-import kiit.results.getOrElse
+import kiit.result.getOrElse
 import test.TestApp
 import test.setup.TestSupport
 import java.io.File

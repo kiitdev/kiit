@@ -1,24 +1,24 @@
 package kiit.telemetry
 
 import kiit.common.Identity
-import kiit.results.Failed
-import kiit.results.Passed
-import kiit.results.Status
+import kiit.codes.Failed
+import kiit.codes.Passed
+import kiit.codes.Status
 import java.util.concurrent.atomic.AtomicLong
 
 
 /**
- * Used for diagnostics / metrics to track and count various @see[kiit.results.Status]
+ * Used for diagnostics / metrics to track and count various @see[kiit.codes.Status]
  * representing successes / failures of some operation identified by @param id.
  * This serves to track the following:
  *
  * 1. total requests  ( processed )
- * 2. total successes  e.g. passed
- * 3. total denied     e.g. security/auth failure
- * 4. total invalid    e.g. invalid / bad request
- * 5. total ignored    e.g. ineligible request
- * 6. total errored    e.g. expected errors
- * 7. total unexpected e.g. unexpected errors
+ * 2. total succeeded  e.g. succeeded, pending or information
+ * 3. total excluded   e.g. ineligible request, skipped
+ * 4. total restricted e.g. security/auth failure
+ * 5. total invalid    e.g. invalid / bad request
+ * 6. total rejected   e.g. expected errors, rule violations
+ * 7. total unserved   e.g. unexpected errors, unavailable
  */
 class Counters(val id: Identity = Identity.empty,
                val tags:List<Tag> = listOf(),
@@ -28,11 +28,11 @@ class Counters(val id: Identity = Identity.empty,
     private val counters = build(custom)
     val processed = Counter()
     val succeeded = Counter()
-    val denied    = Counter()
-    val invalid   = Counter()
-    val ignored   = Counter()
-    val errored   = Counter()
-    val unknown   = Counter()
+    val excluded   = Counter()
+    val restricted = Counter()
+    val invalid    = Counter()
+    val rejected   = Counter()
+    val unserved   = Counter()
 
     /**
      * Track status in the counters
@@ -40,13 +40,12 @@ class Counters(val id: Identity = Identity.empty,
     fun increment(status:Status) {
         processed.inc()
         when(status) {
-            is Passed.Succeeded  -> succeeded.inc()
-            is Failed.Denied     -> denied.inc()
+            is Passed.Excluded   -> excluded.inc()
+            is Passed            -> succeeded.inc()
+            is Failed.Restricted -> restricted.inc()
             is Failed.Invalid    -> invalid.inc()
-            is Failed.Ignored    -> ignored.inc()
-            is Failed.Errored    -> errored.inc()
-            is Failed.Unknown    -> unknown.inc()
-            else                 -> unknown.inc()
+            is Failed.Rejected   -> rejected.inc()
+            is Failed.Unserved   -> unserved.inc()
         }
     }
 
@@ -61,11 +60,11 @@ class Counters(val id: Identity = Identity.empty,
     fun reset() {
         processed.set(0L)
         succeeded.set(0L)
-        denied.set(0L)
+        excluded.set(0L)
+        restricted.set(0L)
         invalid.set(0L)
-        ignored.set(0L)
-        errored.set(0L)
-        unknown.set(0L)
+        rejected.set(0L)
+        unserved.set(0L)
         counters.keys.map { counters[it]?.set(0L) }
     }
 
@@ -85,11 +84,11 @@ class Counters(val id: Identity = Identity.empty,
     companion object {
         val PROCESSED  = "Processed"
         val SUCCEEDED  = "Succeeded"
-        val DENIED     = "Denied"
+        val EXCLUDED   = "Excluded"
+        val RESTRICTED = "Restricted"
         val INVALID    = "Invalid"
-        val IGNORED    = "Ignored"
-        val ERRORED    = "Errored"
-        val UNEXPECTED = "Unexpected"
+        val REJECTED   = "Rejected"
+        val UNSERVED   = "Unserved"
 
         /**
          * Track status in the counters
@@ -102,7 +101,7 @@ class Counters(val id: Identity = Identity.empty,
         /**
          * Tracks the status of all the results using the counters
          */
-        fun <S,F> count(counters: Counters, results:List<kiit.results.Result<S, F>>): Unit {
+        fun <S,F> count(counters: Counters, results:List<kiit.result.Result<S, F>>): Unit {
             // 1. Track processed, failed, etc
             results.forEach { result -> counters.increment(result.status) }
         }

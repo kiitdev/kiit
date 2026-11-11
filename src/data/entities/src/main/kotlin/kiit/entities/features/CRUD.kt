@@ -3,8 +3,8 @@ package kiit.entities.features
 import kiit.entities.Entity
 import kiit.entities.core.EntityOps
 import kiit.entities.EntityOptions
-import kiit.results.Try
-import kiit.results.builders.Tries
+import kiit.result.Try
+import kiit.result.Tries
 
 interface CRUD<TId, T> : EntityOps<TId, T>,
         Creates<TId, T>,
@@ -28,19 +28,19 @@ interface CRUD<TId, T> : EntityOps<TId, T>,
                     false -> {
                         val info = create(item, options)
                         val id = info.first
-                        if (isCreated(id)) Tries.success(info) else Tries.errored("Error creating item")
+                        if (isCreated(id)) Tries.success(info) else Tries.rejected("Error creating item")
                     }
                     true -> {
                         val info = update(item, options)
                         val updated = info.first
                         val id = info.second.identity()
-                        if (updated) Tries.success(Pair(id, info.second)) else Tries.errored("Error updating item")
+                        if (updated) Tries.success(Pair(id, info.second)) else Tries.rejected("Error updating item")
                     }
                 }
                 saveResult
-            } ?: Tries.errored("Entity not provided")
+            } ?: Tries.rejected("Entity not provided")
         } catch (ex: Exception) {
-            Tries.errored<Pair<TId, T>>(ex)
+            Tries.rejected<Pair<TId, T>>(ex)
         }
         return result
     }

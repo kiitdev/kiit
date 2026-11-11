@@ -11,6 +11,7 @@
 
 package kiit.cli
 
+import kiit.common.CliCodes
 import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicReference
 import kotlinx.coroutines.runBlocking
@@ -20,8 +21,9 @@ import kiit.common.types.ContentType
 import kiit.common.info.Folders
 import kiit.common.info.Info
 import kiit.common.utils.Loops.doUntil
-import kiit.results.*
-import kiit.results.builders.Tries
+import kiit.result.*
+import kiit.codes.*
+import kiit.result.Tries
 
 /**
  * Core CLI( Command line interface ) shell provider with life-cycle events,
@@ -99,7 +101,8 @@ open class CLI(
         return when(status){
             is Passed.Succeeded -> Tries.success(true, status)
             is Passed.Pending   -> Tries.pending(true, status)
-            else                -> Failure(Exception(status.desc), status.desc, status.code)
+            is Failed           -> Failure(Exception(status.title), status)
+            else                -> Tries.success(true)
         }
     }
 
@@ -150,10 +153,10 @@ open class CLI(
             }
 
             // Only exit when user typed "exit"
-            val keepReading = result.success && result.status != Codes.EXIT
+            val keepReading = result.success && result.status != CliCodes.EXIT
             keepReading
         }
-        return Tries.success(Codes.EXIT)
+        return Tries.success(CliCodes.EXIT)
     }
 
     /**
@@ -194,13 +197,13 @@ open class CLI(
         // These are typically system level
         val res = if (args.parts.size == 1) {
             when (args.line) {
-                Reserved.About.id   -> { context.help.showAbout()    ; Tries.success(true, Codes.ABOUT) }
-                Reserved.Help.id    -> { context.help.showHelp()      ; Tries.success(true, Codes.HELP) }
-                Reserved.Version.id -> { context.help.showVersion(); Tries.success(true, Codes.VERSION) }
+                Reserved.About.id   -> { context.help.showAbout()    ; Tries.success(true, CliCodes.ABOUT) }
+                Reserved.Help.id    -> { context.help.showHelp()      ; Tries.success(true, CliCodes.HELP) }
+                Reserved.Version.id -> { context.help.showVersion(); Tries.success(true, CliCodes.VERSION) }
                 Reserved.Last.id    -> { context.writer.text(lastArgs.get().line, false); Tries.success(true) }
                 Reserved.Retry.id   -> { executeRepl(lastArgs.get()) }
-                Reserved.Exit.id    -> { Tries.success(false, Codes.EXIT) }
-                Reserved.Quit.id    -> { Tries.success(false, Codes.EXIT) }
+                Reserved.Exit.id    -> { Tries.success(false, CliCodes.EXIT) }
+                Reserved.Quit.id    -> { Tries.success(false, CliCodes.EXIT) }
                 else -> executeRepl(args)
             }
         } else {
@@ -240,9 +243,9 @@ open class CLI(
             // If the request was a help at the application level, the app
             // should handle that, so don't let it propagate back up because
             // we would end up showing help text at the global / CLI level.
-            val finalResult = when (result.status.code) {
+            val finalResult = when (result.status.name) {
                 // Even for failure, let the repl continue processing
-                Codes.HELP.code -> result.withStatus(Codes.SUCCESS, Codes.ERRORED)
+                CliCodes.HELP.name -> result.withStatus(Passed.Succeeded.SUCCESS, Failed.Rejected.RULE_VIOLATION)
                 else -> result
             }
             print(finalResult)

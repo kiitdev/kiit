@@ -7,8 +7,8 @@ import kiit.common.auth.AuthFuncs
 import kiit.common.ext.splitToMapWithPairs
 import kiit.common.info.ApiKey
 import kiit.requests.Request
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.result.Outcome
+import kiit.result.Outcomes
 
 /**
  * Class used to authenticate an api with support for 3 modes:
@@ -50,7 +50,7 @@ open class Authenticator(
             roles.isEmpty || roles.allowGuest -> Outcomes.success(true)
             authMode == AuthMode.Keyed        -> validateApiKey(req, roles)
             authMode == AuthMode.Token        -> validateToken(req, roles)
-            else                              -> Outcomes.denied("Not authorized")
+            else                              -> Outcomes.restricted("Not authorized")
         }
     }
 

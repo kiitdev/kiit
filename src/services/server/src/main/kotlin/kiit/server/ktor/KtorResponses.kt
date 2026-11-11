@@ -5,15 +5,15 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respondBytes
 import kiit.common.types.ContentData
 import kiit.common.types.ContentTypes
-import kiit.results.*
+import kiit.result.*
+import kiit.codes.*
 
 object KtorResponses {
 
+    private val httpCodes = CodesToHttp()
+
     fun status(status: Status): HttpStatusCode {
-        val info = Codes.toHttp(status)
-        val code = info.first
-        val desc = info.second.desc
-        return HttpStatusCode(code, desc)
+        return HttpStatusCode(httpCodes.toCode(status), status.title)
     }
 
     suspend fun respond(call: ApplicationCall, result:Outcome<ContentData>) {

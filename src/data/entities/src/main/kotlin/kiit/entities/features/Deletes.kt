@@ -5,8 +5,8 @@ import kiit.entities.Entity
 import kiit.entities.core.EntityOps
 import kiit.query.Op
 import kiit.query.Delete
-import kiit.results.Try
-import kiit.results.builders.Tries
+import kiit.result.Try
+import kiit.result.Tries
 
 interface Deletes<TId, T> : EntityOps<TId, T> where TId : kotlin.Comparable<TId>, T : Entity<TId> {
 
@@ -25,7 +25,7 @@ interface Deletes<TId, T> : EntityOps<TId, T> where TId : kotlin.Comparable<TId>
      * @return
      */
     suspend fun deleteAsTry(entity: T): Try<Boolean> {
-        return Tries.of { delete(entity) }
+        return Tries.attempt { delete(entity) }
     }
 
     /**

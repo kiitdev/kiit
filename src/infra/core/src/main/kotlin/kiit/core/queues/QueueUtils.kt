@@ -1,11 +1,11 @@
 package kiit.core.queues
 
-import kiit.results.Codes
-import kiit.results.Failure
-import kiit.results.Success
-import kiit.results.Try
+import kiit.codes.Failed
+import kiit.result.Failure
+import kiit.result.Success
+import kiit.result.Try
 
-suspend fun <T> completeAll(entries: List<QueueEntry<T>>?, done:suspend (QueueEntry<T>) -> Try<QueueEntry<T>> ): kiit.results.Result<String, List<Pair<QueueEntry<T>, Throwable>>> {
+suspend fun <T> completeAll(entries: List<QueueEntry<T>>?, done:suspend (QueueEntry<T>) -> Try<QueueEntry<T>> ): kiit.result.Result<String, List<Pair<QueueEntry<T>, Throwable>>> {
     return entries?.let {
         val results = it.map {
             val result = done(it)
@@ -15,11 +15,11 @@ suspend fun <T> completeAll(entries: List<QueueEntry<T>>?, done:suspend (QueueEn
             }
         }
         collect(results)
-    } ?: Failure(listOf(), Codes.INVALID)
+    } ?: Failure(listOf(), Failed.Invalid.INVALID_VALUE)
 }
 
 
-fun <T> completeAllSync(entries: List<QueueEntry<T>>?, done:(QueueEntry<T>) -> Try<QueueEntry<T>> ): kiit.results.Result<String, List<Pair<QueueEntry<T>, Throwable>>> {
+fun <T> completeAllSync(entries: List<QueueEntry<T>>?, done:(QueueEntry<T>) -> Try<QueueEntry<T>> ): kiit.result.Result<String, List<Pair<QueueEntry<T>, Throwable>>> {
     return entries?.let {
         val results = it.map {
             val result = done(it)
@@ -29,11 +29,11 @@ fun <T> completeAllSync(entries: List<QueueEntry<T>>?, done:(QueueEntry<T>) -> T
             }
         }
         collect(results)
-    } ?: Failure(listOf(), Codes.INVALID)
+    } ?: Failure(listOf(), Failed.Invalid.INVALID_VALUE)
 }
 
 
-fun <T> collect(results:List<Pair<QueueEntry<T>, Throwable>?>) : kiit.results.Result<String, List<Pair<QueueEntry<T>, Throwable>>> {
+fun <T> collect(results:List<Pair<QueueEntry<T>, Throwable>?>) : kiit.result.Result<String, List<Pair<QueueEntry<T>, Throwable>>> {
     val failures = results.filterNotNull()
     return when(failures.isEmpty()){
         true  -> Success("Completed")

@@ -17,8 +17,8 @@ import kiit.common.Provider
 import kiit.common.io.Uris
 import kiit.core.cloud.CloudSupport
 import kiit.core.common.FileUtils
-import kiit.results.Try
-import kiit.results.then
+import kiit.result.Try
+import kiit.result.then
 import java.io.File
 
 /**

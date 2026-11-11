@@ -2,6 +2,10 @@
 
 All commands are run from this directory (`src/`).
 
+`{module}` stands for a sub-project registered in `src/settings.gradle.kts`. That file currently
+lists none: `core-codes` was its only one, and it has been extracted to its own repo
+(`dev.kiit:kiit-codes`). The commands below apply to any module added there.
+
 ---
 
 ## Quality Tooling
@@ -18,13 +22,13 @@ All commands are run from this directory (`src/`).
 
 ```bash
 # Check for style violations (fails on any violation)
-./gradlew :core-codes:ktlintCheck
+./gradlew :{module}:ktlintCheck
 
 # Auto-fix all violations that can be fixed automatically
-./gradlew :core-codes:ktlintFormat
+./gradlew :{module}:ktlintFormat
 
 # Run as part of the full check lifecycle
-./gradlew :core-codes:check
+./gradlew :{module}:check
 ```
 
 Reports: `{module}/build/reports/ktlint/`
@@ -53,16 +57,16 @@ No Gradle commands — editors and ktlint pick this up automatically.
 
 ```bash
 # Run static analysis across all configured source sets
-./gradlew :core-codes:detekt
+./gradlew :{module}:detekt
 
 # Run analysis per source set / target
-./gradlew :core-codes:detektMetadataCommonMain
-./gradlew :core-codes:detektJsMain
-./gradlew :core-codes:detektIosArm64Main
-./gradlew :core-codes:detektJvmMain          # experimental — includes type resolution
+./gradlew :{module}:detektMetadataCommonMain
+./gradlew :{module}:detektJsMain
+./gradlew :{module}:detektIosArm64Main
+./gradlew :{module}:detektJvmMain          # experimental — includes type resolution
 
 # Generate a full default config to explore all available rules
-./gradlew :core-codes:detektGenerateConfig
+./gradlew :{module}:detektGenerateConfig
 ```
 
 Config: `{module}/detekt.yml`
@@ -74,7 +78,7 @@ Reports: `{module}/build/reports/detekt/detekt.html`
 
 ```bash
 # Generate HTML documentation
-./gradlew :core-codes:dokkaHtml
+./gradlew :{module}:dokkaHtml
 
 # Output: {module}/build/dokka/html/index.html
 ```
@@ -89,7 +93,7 @@ Reports: `{module}/build/reports/detekt/detekt.html`
 
 ```bash
 # ktlint + detekt + tests in one pass
-./gradlew :core-codes:check
+./gradlew :{module}:check
 ```
 
 ---

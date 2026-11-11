@@ -5,8 +5,8 @@ import kiit.entities.Entity
 import kiit.entities.EntityUpdatable
 import kiit.entities.core.EntityOps
 import kiit.entities.EntityOptions
-import kiit.results.Try
-import kiit.results.builders.Tries
+import kiit.result.Try
+import kiit.result.Tries
 
 interface Creates<TId, T> : EntityOps<TId, T> where TId : kotlin.Comparable<TId>, T : Entity<TId> {
 
@@ -77,7 +77,7 @@ interface Creates<TId, T> : EntityOps<TId, T> where TId : kotlin.Comparable<TId>
      * @return
      */
     suspend fun createAsTry(entity: T): Try<TId> {
-        return Tries.of {
+        return Tries.attempt {
             create(entity)
         }
     }

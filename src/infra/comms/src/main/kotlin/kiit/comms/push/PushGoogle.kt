@@ -16,9 +16,9 @@ import kiit.common.conf.Conf
 import kiit.common.log.Logs
 import kiit.http.HttpRPC
 import kiit.comms.common.Sender
-import kiit.results.Outcome
-import kiit.results.Success
-import kiit.results.builders.Outcomes
+import kiit.result.Outcome
+import kiit.result.Success
+import kiit.result.Outcomes
 
 /**
  * Google FCM ( Fire base Cloud Messaging ) Service.

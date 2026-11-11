@@ -11,6 +11,7 @@
 
 package kiit.app
 
+import kiit.common.CliCodes
 import kiit.context.AppContext
 import kiit.common.args.Args
 import kiit.common.args.ArgsCheck
@@ -25,8 +26,9 @@ import kiit.common.info.About
 import kiit.common.io.Alias
 import kiit.common.io.Uri
 import kiit.common.log.Logs
-import kiit.results.*
-import kiit.results.builders.Outcomes
+import kiit.result.*
+import kiit.codes.*
+import kiit.result.Outcomes
 import java.io.File
 
 object AppUtils {
@@ -44,16 +46,16 @@ object AppUtils {
 
         return when {
             // Case 1: Exit ?
-            isExit(raw, 0) -> Outcomes.success("exit", Codes.EXIT)
+            isExit(raw, 0) -> Outcomes.success("exit", CliCodes.EXIT)
 
             // Case 2a: version ?
-            isVersion(raw, 0) -> Outcomes.success("version", Codes.VERSION)
+            isVersion(raw, 0) -> Outcomes.success("version", CliCodes.VERSION)
 
             // Case 2b: about ?
-            ArgsCheck.isAbout(raw, 0) -> Outcomes.success("about", Codes.ABOUT)
+            ArgsCheck.isAbout(raw, 0) -> Outcomes.success("about", CliCodes.ABOUT)
 
             // Case 3a: Help ?
-            ArgsCheck.isHelp(raw, 0) -> Outcomes.success("help", Codes.HELP)
+            ArgsCheck.isHelp(raw, 0) -> Outcomes.success("help", CliCodes.HELP)
 
             else -> Failure(Err.of("other"))
         }

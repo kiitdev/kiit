@@ -1,8 +1,8 @@
 package kiit.migrations
 
 import kiit.common.data.IDb
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.result.Outcome
+import kiit.result.Outcomes
 
 data class SqlMigrationStep(
     override val type: MigrationType,
@@ -12,7 +12,7 @@ data class SqlMigrationStep(
     override fun run(db: IDb): Outcome<String> {
         return when (type) {
             MigrationType.Custom -> { db.execute(sql); Outcomes.success(sql) }
-            else -> Outcomes.errored("Unexpected migration type")
+            else -> Outcomes.rejected("Unexpected migration type")
         }
     }
 }

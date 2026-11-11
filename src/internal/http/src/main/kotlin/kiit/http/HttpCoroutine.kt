@@ -1,12 +1,10 @@
 package kiit.http
 
-import kiit.results.Outcome
-import kiit.results.Notice
-import kiit.results.Codes
-import kiit.results.Failure
-import kiit.results.Success
-import kiit.results.builders.Notices
-import kiit.results.builders.Outcomes
+import kiit.result.Outcome
+import kiit.codes.Failed
+import kiit.result.Failure
+import kiit.result.Success
+import kiit.result.Outcomes
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -23,12 +21,12 @@ suspend fun awaitHttp(callback: (HttpRPC.HttpRPCResult) -> Unit): Response {
     }
 }
 
-suspend fun awaitHttpTry(callback: (HttpRPC.HttpRPCResult) -> Unit): kiit.results.Result<Response, Exception> {
+suspend fun awaitHttpTry(callback: (HttpRPC.HttpRPCResult) -> Unit): kiit.result.Result<Response, Exception> {
     return suspendCoroutine { cont ->
         callback(object : HttpRPC.HttpRPCResult {
             override fun onSuccess(result: Response) = cont.resume(Success(result))
             override fun onFailure(e: Exception?) {
-                e?.let { cont.resume(Failure(e, Codes.ERRORED)) }
+                e?.let { cont.resume(Failure(e, Failed.Rejected.DEFAULT)) }
             }
         })
     }
@@ -42,18 +40,7 @@ suspend fun awaitHttpOutcome(callback: (HttpRPC.HttpRPCResult) -> Unit): Outcome
             }
 
             override fun onFailure(e: Exception?) {
-                e?.let { cont.resume(Outcomes.errored(e)) }
-            }
-        })
-    }
-}
-
-suspend fun awaitHttpNotice(callback: (HttpRPC.HttpRPCResult) -> Unit): Notice<Response> {
-    return suspendCoroutine { cont ->
-        callback(object : HttpRPC.HttpRPCResult {
-            override fun onSuccess(result: Response) = cont.resume(Notices.success(result))
-            override fun onFailure(e: Exception?) {
-                e?.let { cont.resume(Notices.errored(e)) }
+                e?.let { cont.resume(Outcomes.rejected(e)) }
             }
         })
     }

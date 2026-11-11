@@ -1,7 +1,7 @@
 package kiit.policy.hooks
 
 import kiit.common.Ignore
-import kiit.results.Outcome
+import kiit.result.Outcome
 
 /**
  * A "Hooks" based middle-ware that allows only handling before/after events

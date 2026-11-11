@@ -1,5 +1,6 @@
 package kiit.app
 
+import kiit.common.CliCodes
 import kiit.common.Types
 import kiit.common.args.Args
 import kiit.common.args.ArgsSchema
@@ -8,8 +9,9 @@ import kiit.common.envs.Envs
 import kiit.common.info.About
 import kiit.common.info.Info
 import kiit.common.io.Alias
-import kiit.results.*
-import kiit.results.builders.Tries
+import kiit.result.*
+import kiit.codes.*
+import kiit.result.Tries
 
 /**
  * Builds the display for help / version / about requests.
@@ -63,7 +65,7 @@ class AppHelp(val info: Info, val args: ArgsSchema, val envs: Envs = Envs.defaul
                     appMeta.handle(assist)
 
                     // Prevent futher processing by return failure
-                    Tries.errored<Args>(Exception(assist.desc), Codes.ERRORED.copy(assist.status.name, assist.status.code, assist.status.desc))
+                    Tries.rejected<Args>(Exception(assist.status.title), Failed.Rejected(assist.status.name, assist.status.title, StatusConstants.KIIT, "cli"))
                 }
             }
         }
@@ -81,11 +83,11 @@ class AppHelp(val info: Info, val args: ArgsSchema, val envs: Envs = Envs.defaul
      */
     fun handle(check: Outcome<String>) {
         if (check.success) {
-            when (check.code) {
-                Codes.HELP.code -> help()
-                Codes.ABOUT.code -> about()
-                Codes.VERSION.code -> version()
-                else -> println("Unexpected command: " + check.desc)
+            when (check.status.name) {
+                CliCodes.HELP.name -> help()
+                CliCodes.ABOUT.name -> about()
+                CliCodes.VERSION.name -> version()
+                else -> println("Unexpected command: " + check.status.title)
             }
         }
     }
@@ -124,7 +126,7 @@ class AppHelp(val info: Info, val args: ArgsSchema, val envs: Envs = Envs.defaul
             writer.highlight("format", false)
             writer.text("  : java -jar app-name.jar -key=value*", true)
             writer.highlight("example", false)
-            writer.text(" : java -jar ${about.name.toLowerCase().replace(" ", "")}.jar ", false)
+            writer.text(" : java -jar ${about.name.lowercase().replace(" ", "")}.jar ", false)
             args.items.forEach { arg ->
                 val example = when (arg.dataType) {
                     Types.JStringClass.simpleName -> "\"${arg.example}\""
@@ -171,7 +173,7 @@ class AppHelp(val info: Info, val args: ArgsSchema, val envs: Envs = Envs.defaul
         op()
     }
 
-    private fun title(name: String) = writer.title(name.toUpperCase() + ": ")
+    private fun title(name: String) = writer.title(name.uppercase() + ": ")
 
     private fun separator(letter: String): String = letter.repeat(50)
 }

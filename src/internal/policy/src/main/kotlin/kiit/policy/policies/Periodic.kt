@@ -2,8 +2,9 @@ package kiit.policy.policies
 
 import kiit.common.DateTime
 import kiit.policy.Policy
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.codes.Failed
+import kiit.result.Outcome
+import kiit.result.Outcomes
 import java.util.concurrent.atomic.AtomicReference
 
 
@@ -27,7 +28,7 @@ class Periodic<I, O>(private val timeInSeconds: Long, val logger: kiit.common.lo
             else -> {
                 when(curr.isBefore(now)) {
                     true -> proceed(now, i, operation)
-                    false -> Outcomes.ignored("Skipping periodic execution")
+                    false -> Outcomes.rejected("Skipping periodic execution", Failed.Rejected.PRECONDITION_FAILED)
                 }
             }
         }

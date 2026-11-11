@@ -40,7 +40,8 @@ import kiit.common.checks.CheckConsts.Error_Is_Url
 import kiit.common.checks.CheckConsts.Error_Is_ZipCodeUS
 import kiit.common.checks.CheckConsts.Error_Is_ZipCodeUSWithFour
 import kiit.common.checks.CheckConsts.Error_StartsWith
-import kiit.results.*
+import kiit.result.*
+import kiit.codes.*
 
 object Checks {
 

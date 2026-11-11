@@ -1,8 +1,8 @@
 package test.setup
 
 import kiit.apis.*
-import kiit.results.*
-import kiit.results.builders.Outcomes
+import kiit.result.Outcome
+import kiit.result.Outcomes
 
 
 @Api(area = "app", name = "SampleMiddleware", desc = "api to access and manage users 3", auth = AuthModes.NONE, policies = ["api_test"])
@@ -32,6 +32,6 @@ open class SampleMiddlewareApi  {
 
     @Action()
     fun errored(): Outcome<String> {
-        return Outcomes.errored("test failed")
+        return Outcomes.rejected("test failed")
     }
 }

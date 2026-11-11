@@ -27,3 +27,6 @@ project/plugins/project/
 .worksheet
 
 
+
+# proof-of-concept experiments, not part of the build
+poc/

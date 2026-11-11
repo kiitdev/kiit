@@ -22,8 +22,8 @@ import org.junit.Test
 import kiit.common.args.Args
 import kiit.common.args.ArgsCheck
 import kiit.common.args.ArgsSchema
-import kiit.results.Try
-import kiit.results.getOrElse
+import kiit.result.Try
+import kiit.result.getOrElse
 
 
 class ArgsTests {

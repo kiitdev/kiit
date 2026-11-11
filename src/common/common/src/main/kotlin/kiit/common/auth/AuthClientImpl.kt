@@ -1,11 +1,11 @@
 package kiit.common.auth
 
 import kiit.common.crypto.Secure
-import kiit.results.Failure
-import kiit.results.Outcome
-import kiit.results.Success
-import kiit.results.builders.Outcomes
-import kiit.results.then
+import kiit.result.Failure
+import kiit.result.Outcome
+import kiit.result.Success
+import kiit.result.Outcomes
+import kiit.result.then
 
 open class AuthClientImpl(
     private val guest: User,

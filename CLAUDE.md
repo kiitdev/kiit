@@ -1,8 +1,8 @@
-# Kiit Framework — Claude Code Context
+# Kiit Toolkit — Claude Code Context
 
 ## About Kiit
 
-Kiit is an open-source Kotlin Multiplatform (KMP) framework developed and maintained by CodeHelix. It is a monorepo of modular libraries organized into categories, designed for sharing code across server (JVM/Kotlin), Android, JavaScript/TypeScript, and iOS projects.
+Kiit is an open-source Kotlin Multiplatform (KMP) toolkit developed and maintained by CodeHelix. It is a monorepo of modular libraries organized into categories, designed for sharing code across server (JVM/Kotlin), Android, JavaScript/TypeScript, and iOS projects.
 
 - **Domain**  : kiit.dev
 - **GitHub**  : https://github.com/slatekit/kiit
@@ -49,16 +49,16 @@ is always present.
 
 ---
 
-## Current State of the Framework
+## Current State of the Toolkit
 
-The framework is currently in a pre-migration state. All libraries exist but do not yet
+The toolkit is currently in a pre-migration state. All libraries exist but do not yet
 follow the naming conventions, structure, or build configuration described in this document.
 
 | Concern                | Current State                                                  |
 |------------------------|----------------------------------------------------------------|
 | Gradle DSL             | Groovy (`build.gradle`)                                        |
-| Kotlin version         | 1.9.x                                                          |
-| Ktor version           | 2.x.x (tied to Kotlin 1.8.x)                                   |
+| Kotlin version         | 2.3.21 (JDK 21 to build, JVM target 21)                        |
+| Ktor version           | 2.x.x (not yet moved to 3.x)                                   |
 | Gradle version         | 8.x                                                            |
 | Version catalog        | Not in use — versions hardcoded in build files                 |
 | Multiplatform (KMP)    | Not configured — JVM only                                      |
@@ -69,12 +69,18 @@ follow the naming conventions, structure, or build configuration described in th
 | ktlint                 | Not configured                                                 |
 | Android Gradle Plugin  | 7.x                                                            |
 
+**Extracted libraries.** `result` and `codes` now live in their own repos
+(`dev.kiit:kiit-result` and `dev.kiit:kiit-codes`, both 1.2.0). Their copies were deleted from
+this repo; modules here depend on the published `dev.kiit:kiit-result:1.2.0` (it exposes
+`kiit-codes`). Packages are `kiit.result` and `kiit.codes`. `services/jobs` was left
+unmigrated and does not build.
+
 The `migration` block in each library's category JSON captures the current artifact ID,
 current package name, current folder location, and migration status for every library.
 
 ---
 
-## Desired / Future State of the Framework
+## Desired / Future State of the Toolkit
 
 | Concern                | Desired State                                               |
 |------------------------|-------------------------------------------------------------|
@@ -87,7 +93,7 @@ current package name, current folder location, and migration status for every li
 | Folder structure       | Matches category structure under `src/{category}/{library}` |
 | Artifact IDs           | Follow `kiit-{category}-{library}` convention               |
 | Package names          | Rooted at `kiit.*` following naming conventions             |
-| Publishing             | Maven Central (stable), GitHub Packages (pre-release)       |
+| Publishing             | GitHub Packages; Maven Central per module, once stable      |
 | ktlint                 | Configured and enforced across all modules                  |
 | Android Gradle Plugin  | 8.7.0                                                       |
 
@@ -277,7 +283,7 @@ skill must translate these to `kiit.*` equivalents using `migration.currentPacka
 
 | Tier      | Repo                              | groupId        | Maintained by  | Published to          |
 |-----------|-----------------------------------|----------------|----------------|-----------------------|
-| Official  | `github.com/slatekit/kiit`        | `dev.kiit`     | CodeHelix      | Maven Central         |
+| Official  | `github.com/slatekit/kiit`        | `dev.kiit`     | CodeHelix      | GH Packages (Central per module) |
 | Extension | `github.com/slatekit/kiit-ext`    | `dev.kiit.ext` | Contributor    | Maven Central / GH    |
 | Community | Author's own repo                 | Author's own   | Author         | Author's choice       |
 
@@ -293,8 +299,8 @@ Every artifact published to Maven Central must have:
 - [ ] POM with: `name`, `description`, `url`, `licenses`, `developers`, `scm`
 - [ ] Semantic version tag on the git commit
 
-Pre-release artifacts (alpha, beta, RC) → GitHub Packages only.
-Stable releases → Maven Central.
+Modules publish to GitHub Packages by default. Only `kiit-codes` and `kiit-result` go to Maven Central and npm for now.
+A module moves to Maven Central one at a time, only when the user says it is stable. Modules already on Maven Central stay as they are.
 
 ---
 

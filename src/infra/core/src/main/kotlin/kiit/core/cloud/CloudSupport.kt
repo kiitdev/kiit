@@ -13,7 +13,7 @@
 
 package kiit.core.cloud
 
-import kiit.results.Try
+import kiit.result.Try
 
 interface CloudSupport {
 
@@ -45,10 +45,10 @@ interface CloudSupport {
     ): Try<T> {
         val result = try {
             val resultValue = call()
-            kiit.results.Success(resultValue)
+            kiit.result.Success(resultValue)
         } catch (ex: Exception) {
             onError(source, action, tag, data, ex)
-            kiit.results.Failure(ex, msg = "Error performing action $action on $source with tag $tag. $ex")
+            kiit.result.Failure(Exception("Error performing action $action on $source with tag $tag. $ex", ex))
         }
         return result
     }
@@ -81,10 +81,10 @@ interface CloudSupport {
     ): Try<T> {
         val result = try {
             val resultValue = call()
-            kiit.results.Success(resultValue)
+            kiit.result.Success(resultValue)
         } catch (ex: Exception) {
             onError(source, action, tag, data, ex)
-            kiit.results.Failure(ex, msg = "Error performing action $action on $source with tag $tag. $ex")
+            kiit.result.Failure(Exception("Error performing action $action on $source with tag $tag. $ex", ex))
         }
         return result
     }

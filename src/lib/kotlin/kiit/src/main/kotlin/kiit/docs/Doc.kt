@@ -36,7 +36,7 @@ data class Doc(
         val tokens = depends.split(',')
         tokens.forEach { token ->
             when (token) {
-                "res" -> items += " kiit-results"
+                "res" -> items += " kiit-result"
                 "com" -> items += " kiit-common"
                 "ent" -> items += " slatekit-entities"
                 "core" -> items += " slatekit-core"

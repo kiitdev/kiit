@@ -3,8 +3,8 @@ package skky.tasks
 import kiit.common.DateTimes
 import kiit.common.Identity
 import kiit.common.ids.UUIDs
-import kiit.results.Try
-import kiit.results.builders.Tries
+import kiit.result.Try
+import kiit.result.Tries
 import kiit.tasks.Events
 import kiit.tasks.Priority
 import kiit.tasks.Queue

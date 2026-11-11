@@ -9,8 +9,8 @@ import kiit.core.eventing.EventConverter
 import kiit.core.eventing.EventProducer
 import kiit.core.eventing.EventTopic
 import kiit.core.eventing.EventUtils
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.result.Outcome
+import kiit.result.Outcomes
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 
@@ -64,7 +64,7 @@ class KafkaEventProducer<TData, TEvent>(
             val json = converter.encode(envelope)
             publish(envelope, key, json)
         } catch (ex: Exception) {
-            Outcomes.unexpected<RecordMetadata>(ex)
+            Outcomes.unserved<RecordMetadata>(ex)
         }
     }
 
@@ -83,7 +83,7 @@ class KafkaEventProducer<TData, TEvent>(
 //        publish(promise, envelope, key, message)
 //        val result:Future[Either[WWError, RecordMetadata]] = promise.future
 //        result
-        return Outcomes.errored()
+        return Outcomes.rejected()
     }
 
     /**
@@ -119,7 +119,7 @@ class KafkaEventProducer<TData, TEvent>(
                     val msg =
                         "Action='kafka-publish', success=false, status=unexpected, producer=${id.instance}, topic=$topic}"
                     logger.error(msg, ex)
-                    promise.complete(Outcomes.unexpected(ex))
+                    promise.complete(Outcomes.unserved(ex))
                 }
             }
             // No need to flush, kakfa will handle that itself
@@ -127,7 +127,7 @@ class KafkaEventProducer<TData, TEvent>(
         } catch (ex: Exception) {
             val msg = "Action='kafka-publish', success=false, status=unexpected, producer=${id.instance}, topic=$topic}"
             logger.error(msg, ex)
-            promise.complete(Outcomes.unexpected(ex))
+            promise.complete(Outcomes.unserved(ex))
         }
     }
 
@@ -157,7 +157,7 @@ class KafkaEventProducer<TData, TEvent>(
         } catch (ex: Exception) {
             val msg = "Action='kafka-publish', success=false, status=unexpected, producer=${id.instance}, topic=$topic}"
             logger.error(msg, ex)
-            Outcomes.unexpected(ex)
+            Outcomes.unserved(ex)
         }
     }
 

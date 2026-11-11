@@ -20,7 +20,7 @@ open class Restify : Rewriter, RewriteSupport {
 
         // Get the first and second part
         val parts = req.request.parts
-        val verb = req.request.verb.toLowerCase()
+        val verb = req.request.verb.lowercase()
         val container = req.host
 
         val result = if (verb == verbGet && parts[2] == "") {

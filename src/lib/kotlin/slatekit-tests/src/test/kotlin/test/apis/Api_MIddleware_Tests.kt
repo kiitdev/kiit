@@ -18,8 +18,8 @@ import org.junit.Test
 import kiit.apis.*
 import kiit.apis.setup.api
 import kiit.apis.setup.routes
-import kiit.results.Codes
-import kiit.results.Outcome
+import kiit.codes.Codes
+import kiit.result.Outcome
 import test.setup.SampleMiddlewareApi
 
 /**

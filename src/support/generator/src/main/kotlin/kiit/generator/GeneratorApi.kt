@@ -8,9 +8,9 @@ import kiit.apis.core.Roles
 import kiit.context.Context
 import kiit.common.Sources
 import kiit.common.io.Uris
-import kiit.results.Try
-import kiit.results.builders.Tries
-import kiit.results.flatMap
+import kiit.result.Try
+import kiit.result.Tries
+import kiit.result.flatMap
 
 
 @Api(area = "kiit", name = "new", desc = "generator for new projects",
@@ -100,7 +100,7 @@ class GeneratorApi(val context: Context, val service: GeneratorService) {
      * @param packageName: The package name of the generate item
      */
     private fun generate(templateName: String, name: String, packageName: String): Try<GeneratorResult> {
-        val loadResult = Tries.of {
+        val loadResult = Tries.attempt {
             val templateDirPath = service.conf.getString(Setup.KEY_GENERATION_SOURCE)
             val templateOutPath = service.conf.getString(Setup.KEY_GENERATION_OUTPUT)
             val rootDir = Uris.parse(templateDirPath).toFile()

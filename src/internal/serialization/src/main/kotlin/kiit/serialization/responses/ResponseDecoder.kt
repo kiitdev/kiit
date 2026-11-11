@@ -3,8 +3,9 @@ package kiit.serialization.responses
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
-import kiit.results.*
-import kiit.results.builders.Outcomes
+import kiit.result.*
+import kiit.codes.*
+import kiit.result.Outcomes
 
 /**
  * {
@@ -50,25 +51,21 @@ object ResponseDecoder {
 
 
     fun decodeStatus(root:JSONObject): Status {
-        val code = (root.get("code") as Long).toInt()
-        val status = when(val s = Codes.toStatus(code)){
-            null -> {
-                val name = root.get("name") as String
-                val desc = root.get("desc") as String
-                val type = root.get("type") as String
-                when(type) {
-                    "Succeeded" -> Passed.Succeeded(name, code, desc)
-                    "Pending"   -> Passed.Pending(name, code, desc)
-                    "Denied"   -> Failed.Denied (name, code, desc)
-                    "Ignored"   -> Failed.Ignored(name, code, desc)
-                    "Invalid"   -> Failed.Invalid(name, code, desc)
-                    "Errored"   -> Failed.Errored(name, code, desc)
-                    else        -> Failed.Unknown(name, code, desc)
-                }
-            }
-            else -> s
+        val name = root.get("name") as String
+        val title = root.get("desc") as? String ?: name
+        val group = root.get("type") as String
+        // Built-in code with the same group and name, otherwise a custom code in that group.
+        val known = Codes.all.firstOrNull { it.group == group && it.name == name }
+        return known ?: when(group) {
+            "Succeeded"   -> Passed.Succeeded(name, title)
+            "Pending"     -> Passed.Pending(name, title)
+            "Excluded"    -> Passed.Excluded(name, title)
+            "Information" -> Passed.Information(name, title)
+            "Restricted"  -> Failed.Restricted(name, title)
+            "Invalid"     -> Failed.Invalid(name, title)
+            "Rejected"    -> Failed.Rejected(name, title)
+            else          -> Failed.Unserved(name, title)
         }
-        return status
     }
 
 
@@ -84,7 +81,7 @@ object ResponseDecoder {
             }
             else -> listOf()
         }
-        return Err.ErrorList(errs, if(errs.isNotEmpty()) errs[0].msg else "")
+        return Err.ErrorList(errs, if(errs.isNotEmpty()) errs[0].message else "")
     }
 
 
@@ -95,13 +92,13 @@ object ResponseDecoder {
                 Err.on(
                         field = err.getValue("field") as String,
                         value = err.getValue("value") as String,
-                        msg = err.getValue("message") as String
+                        message = err.getValue("message") as String
                 )
             }
             "action" -> {
-                Err.of(msg = err.getValue("message") as String)
+                Err.of(message = err.getValue("message") as String)
             }
-            else -> Err.of(msg = err.getValue("message") as String)
+            else -> Err.of(message = err.getValue("message") as String)
         }
     }
 }

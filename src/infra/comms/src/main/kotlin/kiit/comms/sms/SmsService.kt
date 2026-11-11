@@ -17,7 +17,8 @@ import kiit.common.values.Vars
 import kiit.common.types.Country
 import kiit.http.HttpRPC
 import kiit.comms.common.TemplateSender
-import kiit.results.*
+import kiit.result.*
+import kiit.codes.*
 
 /**
  * Sms Service base class with support for templates and countries
@@ -64,18 +65,18 @@ abstract class SmsService(
      * @param phone
      * @return
      */
-    open fun massagePhone(iso: String, phone: String): Notice<String> {
-        val finalIso = iso.toUpperCase()
+    open fun massagePhone(iso: String, phone: String): Outcome<String> {
+        val finalIso = iso.uppercase()
 
         val result = validate(finalIso, phone)
 
         // Case 1: Invalid params
-        return if (!result.success) {
-            Failure(result.desc)
+        return if (result is Failure) {
+            result
         }
         // Case 2: Invalid iso or unsupported
         else if (!countryLookup.contains(finalIso)) {
-            Failure("$finalIso is not a valid country code")
+            Outcomes.invalid("$finalIso is not a valid country code")
         }
         // Case 3: Inputs valid so massage
         else {
@@ -85,10 +86,10 @@ abstract class SmsService(
         }
     }
 
-    private fun validate(countryCode: String, phone: String): Notice<String> =
+    private fun validate(countryCode: String, phone: String): Outcome<String> =
             when {
-                countryCode.isNullOrEmpty() -> Failure("country code not provided")
-                phone.isNullOrEmpty() -> Failure("phone not provided")
+                countryCode.isNullOrEmpty() -> Outcomes.invalid("country code not provided")
+                phone.isNullOrEmpty() -> Outcomes.invalid("phone not provided")
                 else -> Success("")
             }
 }

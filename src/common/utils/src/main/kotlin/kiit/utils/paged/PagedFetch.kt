@@ -1,6 +1,6 @@
 package kiit.utils.paged
 
-import kiit.results.Outcome
+import kiit.result.Outcome
 import java.util.concurrent.atomic.AtomicReference
 
 /**

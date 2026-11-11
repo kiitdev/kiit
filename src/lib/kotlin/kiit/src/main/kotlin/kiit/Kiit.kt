@@ -17,9 +17,9 @@ import kiit.common.log.Logger
 import kiit.connectors.cli.CliApi
 import kiit.generator.Help
 import kiit.generator.Setup
-import kiit.results.Success
+import kiit.result.Success
 import kiit.serialization.Serialization
-import kiit.results.Failure
+import kiit.result.Failure
 
 class Kiit(ctx: Context) : App<Context>(ctx, AppOptions(showWelcome = false, showDisplay = false, showSummary = false)), KiitServices {
 

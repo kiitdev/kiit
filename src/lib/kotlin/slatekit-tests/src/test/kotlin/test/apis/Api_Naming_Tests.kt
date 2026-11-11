@@ -12,7 +12,7 @@ import kiit.apis.setup.api
 import kiit.apis.setup.routes
 import kiit.utils.naming.LowerHyphenNamer
 import kiit.utils.naming.LowerUnderscoreNamer
-import kiit.results.getOrElse
+import kiit.result.getOrElse
 import test.apis.samples.Sample_API_1_Core
 import test.setup.SampleExtendedApi
 import test.setup.SamplePOKOApi

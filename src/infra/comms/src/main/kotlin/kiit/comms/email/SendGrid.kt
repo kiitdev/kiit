@@ -15,8 +15,9 @@ import okhttp3.Request
 import kiit.common.info.ApiLogin
 import kiit.utils.templates.Templates
 import kiit.http.HttpRPC
-import kiit.results.*
-import kiit.results.builders.Outcomes
+import kiit.result.*
+import kiit.codes.*
+import kiit.result.Outcomes
 
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject

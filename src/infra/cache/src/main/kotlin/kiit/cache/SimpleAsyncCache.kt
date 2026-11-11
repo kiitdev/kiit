@@ -7,7 +7,7 @@ import kotlinx.coroutines.yield
 import kiit.common.Identity
 import kiit.common.log.Logger
 import kiit.common.log.LoggerConsole
-import kiit.results.Outcome
+import kiit.result.Outcome
 
 /**
  * Cache implementation using channels for managing shared state ( cache data / stats )

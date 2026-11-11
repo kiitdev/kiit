@@ -24,9 +24,9 @@ import kiit.common.info.ApiLogin
 import kiit.core.files.CloudFiles
 import kiit.core.files.CloudFile
 import kiit.core.files.CloudFileEntry
-import kiit.results.Try
-import kiit.results.builders.Tries
-import kiit.results.getOrElse
+import kiit.result.Try
+import kiit.result.Tries
+import kiit.result.getOrElse
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.time.Instant
