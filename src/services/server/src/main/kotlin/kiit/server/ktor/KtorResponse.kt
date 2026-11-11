@@ -21,7 +21,8 @@ import kiit.common.types.*
 import kiit.serialization.responses.ResponseEncoder
 import kiit.requests.Response
 import kiit.serialization.Serialization
-import kiit.results.*
+import kiit.result.*
+import kiit.codes.*
 import kiit.server.ServerSettings
 import kiit.server.core.ResponseHandler
 
@@ -35,7 +36,7 @@ class KtorResponse(val settings:ServerSettings)  : ResponseHandler {
         return when(result.success) {
             false -> {
                 when(result.err){
-                    is ExceptionErr ->  error(call, result, (result.err as ExceptionErr).err)
+                    is StatusException ->  error(call, result, Err.ErrorList((result.err as StatusException).errors, result.err?.message.orEmpty()))
                     else ->  json(call, result)
                 }
             }
@@ -98,8 +99,8 @@ class KtorResponse(val settings:ServerSettings)  : ResponseHandler {
 
 
     override fun toHttpStatus(response:Response<Any?>): HttpStatusCode {
-        val http = Codes.toHttp(Passed.Succeeded(response.name, response.code, response.desc ?: ""))
-        return HttpStatusCode(http.first, http.second.desc)
+        // The response code is already the http status code ( see toResponse )
+        return HttpStatusCode(response.code, response.desc ?: "")
     }
 
 

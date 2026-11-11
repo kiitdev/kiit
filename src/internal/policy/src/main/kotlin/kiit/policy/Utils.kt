@@ -2,10 +2,10 @@ package kiit.policy
 
 import kiit.common.Identity
 import kiit.policy.policies.*
-import kiit.results.Outcome
-import kiit.results.Status
-import kiit.results.Try
-import kiit.results.builders.Outcomes
+import kiit.result.Outcome
+import kiit.codes.Status
+import kiit.result.Try
+import kiit.result.Outcomes
 import kiit.telemetry.Counters
 
 /**

@@ -11,6 +11,9 @@
 
 package test.cli
 
+import kiit.codes.Passed
+import kiit.codes.CodesToHttp
+import kiit.common.CliCodes
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Test
@@ -20,7 +23,8 @@ import kiit.common.types.Content
 import kiit.common.info.Folders
 import kiit.common.info.Info
 import kiit.common.types.Contents
-import kiit.results.*
+import kiit.result.*
+import kiit.codes.*
 import kiit.serialization.Serialization
 
 
@@ -57,7 +61,7 @@ class CLITests {
             val text = args.line
             testExec.add(text)
             val req = CliRequest.build(Args.empty(), text)
-            return Success(CliResponse(req, true, Codes.SUCCESS.name, Status.toType(Codes.SUCCESS), Codes.SUCCESS.code, mapOf(), text))
+            return Success(CliResponse(req, true, Passed.Succeeded.SUCCESS.name, Passed.Succeeded.SUCCESS.group, CodesToHttp().toCode(Passed.Succeeded.SUCCESS), mapOf(), text))
         }
 
 
@@ -135,7 +139,7 @@ class CLITests {
         val cli = MyCLI()
         val result = runBlocking { cli.eval(Reserved.About.id) }
         Assert.assertEquals(true, result.success)
-        Assert.assertEquals(Codes.ABOUT.code, result.code)
+        Assert.assertEquals(CliCodes.ABOUT.name, result.status.name)
     }
 
 
@@ -144,7 +148,7 @@ class CLITests {
         val cli = MyCLI()
         val result = runBlocking { cli.eval(Reserved.Help.id) }
         Assert.assertEquals(true, result.success)
-        Assert.assertEquals(Codes.HELP.code, result.code)
+        Assert.assertEquals(CliCodes.HELP.name, result.status.name)
     }
 
 
@@ -153,7 +157,7 @@ class CLITests {
         val cli = MyCLI()
         val result = runBlocking { cli.eval(Reserved.Version.id) }
         Assert.assertEquals(true, result.success)
-        Assert.assertEquals(Codes.VERSION.code, result.code)
+        Assert.assertEquals(CliCodes.VERSION.name, result.status.name)
     }
 
 
@@ -162,7 +166,7 @@ class CLITests {
         val cli = MyCLI()
         val result = runBlocking { cli.eval(Reserved.Exit.id) }
         Assert.assertEquals(true, result.success)
-        Assert.assertEquals(Codes.EXIT.code, result.code)
+        Assert.assertEquals(CliCodes.EXIT.name, result.status.name)
     }
 
 
@@ -171,6 +175,6 @@ class CLITests {
         val cli = MyCLI()
         val result = runBlocking { cli.eval(Reserved.Quit.id) }
         Assert.assertEquals(true, result.success)
-        Assert.assertEquals(Codes.EXIT.code, result.code)
+        Assert.assertEquals(CliCodes.EXIT.name, result.status.name)
     }
 }

@@ -2,7 +2,7 @@ package kiit.telemetry
 
 import kiit.common.DateTime
 import kiit.common.Identity
-import kiit.results.Err
+import kiit.codes.Err
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -33,18 +33,18 @@ class Calls(val id: Identity) {
     fun passed(): Long = counters.succeeded.inc()
 
 
-    fun failed(): Long = counters.errored.inc()
+    fun failed(): Long = counters.rejected.inc()
 
 
     fun failed(ex:Exception): Long {
         lastErr.set(Err.ex(ex))
-        return counters.unknown.inc()
+        return counters.unserved.inc()
     }
 
 
     fun totalRuns():Long = counters.processed.get()
     fun totalPassed():Long = counters.succeeded.get()
-    fun totalFailed():Long = counters.errored.get() + counters.unknown.get()
+    fun totalFailed():Long = counters.rejected.get() + counters.unserved.get()
     fun lastError():Err? = lastErr.get()
     fun lastTime():DateTime? = lastRunTime.get()
 }

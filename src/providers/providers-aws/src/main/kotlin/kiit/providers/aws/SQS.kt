@@ -31,8 +31,8 @@ import kiit.common.ext.toStringUtc
 import kiit.core.queues.QueueEntry
 import kiit.core.queues.QueueValueConverter
 import kiit.core.queues.CloudQueue
-import kiit.results.Try
-import kiit.results.builders.Tries
+import kiit.result.Try
+import kiit.result.Tries
 import java.io.File
 import java.io.IOException
 
@@ -170,11 +170,8 @@ class SQS<T>(
             val value = converter.decode(content)
             value?.let {
                 send(value, tagName, tagValue)
-            } ?: kiit.results.Failure(IOException("Invalid file path: $fileNameLocal"))
-        } ?: kiit.results.Failure(
-            IOException("Invalid file path: $fileNameLocal"),
-            msg = "Invalid file path: $fileNameLocal"
-        )
+            } ?: kiit.result.Failure(IOException("Invalid file path: $fileNameLocal"))
+        } ?: kiit.result.Failure(IOException("Invalid file path: $fileNameLocal"))
     }
 
     /** Abandons the message supplied    *
@@ -183,7 +180,7 @@ class SQS<T>(
      */
     override suspend fun abandon(entry: QueueEntry<T>?): Try<QueueEntry<T>> {
         return entry?.let {
-            Tries.of {
+            Tries.attempt {
                 discard(it, "abandon")
                 it
             }
@@ -196,7 +193,7 @@ class SQS<T>(
      */
     override suspend fun done(entry: QueueEntry<T>?): Try<QueueEntry<T>> {
         return entry?.let {
-            Tries.of {
+            Tries.attempt {
                 discard(it, "done")
                 it
             }

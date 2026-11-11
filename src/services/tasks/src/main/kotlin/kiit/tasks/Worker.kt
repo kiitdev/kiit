@@ -2,9 +2,9 @@ package kiit.tasks
 
 import kiit.common.Identity
 import kiit.meta.kClass
-import kiit.results.Err
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.codes.Err
+import kiit.result.Outcome
+import kiit.result.Outcomes
 import kiit.utils.events.Emitter
 import kotlin.reflect.KCallable
 
@@ -68,10 +68,10 @@ open class Worker(val context: WorkContext, val events: Events = Events()) : Che
      */
     open suspend fun control(command: Command, note: String? = null): Outcome<Status> {
         if(isFailed()) {
-            return Outcomes.errored(Err.of("Worker state = failed"))
+            return Outcomes.rejected(Err.of("Worker state = failed"))
         }
         if(isCompleted()) {
-            return Outcomes.errored(Err.of("Worker state = completed"))
+            return Outcomes.rejected(Err.of("Worker state = completed"))
         }
 
         val validStates = listOf(Status.Running, Status.Paused, Status.Ready, Status.InActive)

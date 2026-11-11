@@ -1,8 +1,8 @@
 package kiit.tasks
 
-import kiit.results.Err
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.codes.Err
+import kiit.result.Outcome
+import kiit.result.Outcomes
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
@@ -20,16 +20,16 @@ abstract class WorkflowBase(override val context: WorkContext, override val work
 
     suspend fun ensure(states:List<Status>, op: suspend () -> Outcome<Status> ):Outcome<Status> {
         if(worker.isFailed()) {
-            return Outcomes.errored(Err.of("Worker state = failed"))
+            return Outcomes.rejected(Err.of("Worker state = failed"))
         }
         if(worker.isCompleted()) {
-            return Outcomes.errored(Err.of("Worker state = completed"))
+            return Outcomes.rejected(Err.of("Worker state = completed"))
         }
         val state = worker.context.action.status.get()
         val currentStatus = state.status
         val matched = states.firstOrNull { it == currentStatus }
         return when(matched){
-            null -> Outcomes.errored(Err.of("Worker state = ${state.status.name}"))
+            null -> Outcomes.rejected(Err.of("Worker state = ${state.status.name}"))
             else -> op()
         }
     }

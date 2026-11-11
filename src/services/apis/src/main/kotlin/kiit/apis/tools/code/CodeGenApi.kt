@@ -7,7 +7,7 @@ import kiit.apis.tools.code.builders.JavaBuilder
 import kiit.apis.tools.code.builders.KotlinBuilder
 import kiit.common.*
 import kiit.requests.Request
-import kiit.results.Notice
+import kiit.result.Outcome
 
 /**
  * slatekit.codegen.toJava   -templatesFolder="user://git/slatekit/scripts/templates/codegen/java"       -outputFolder="user://dev/temp/codegen/java"  -packageName="myapp" -classFile="" -methodFile="" -modelFile=""
@@ -27,22 +27,22 @@ class CodeGenApi : HostAware {
     }
 
     @Action(name = "", desc = "generates client code in Kotlin")
-    fun toKotlin(req: Request, templatesFolder: String, outputFolder: String, packageName: String, createDtos:Boolean): Notice<String> {
+    fun toKotlin(req: Request, templatesFolder: String, outputFolder: String, packageName: String, createDtos:Boolean): Outcome<String> {
         return generate(req, templatesFolder, outputFolder, packageName, Language.Kotlin, createDtos)
     }
 
     @Action(name = "", desc = "generates client code in Swift")
-    fun toSwift(req: Request, templatesFolder: String, outputFolder: String, packageName: String, createDtos:Boolean): Notice<String> {
+    fun toSwift(req: Request, templatesFolder: String, outputFolder: String, packageName: String, createDtos:Boolean): Outcome<String> {
         return generate(req, templatesFolder, outputFolder, packageName, Language.Kotlin, createDtos)
     }
 
     @Action(name = "", desc = "generates client code in Java")
-    fun toJava(req: Request, templatesFolder: String, outputFolder: String, packageName: String, createDtos:Boolean): Notice<String> {
+    fun toJava(req: Request, templatesFolder: String, outputFolder: String, packageName: String, createDtos:Boolean): Outcome<String> {
         return generate(req, templatesFolder, outputFolder, packageName, Language.Kotlin, createDtos)
     }
 
     @Action(name = "", desc = "generates client code in javascript")
-    fun toJS(req: Request, templatesFolder: String, outputFolder: String, packageName: String, createDtos:Boolean): Notice<String> {
+    fun toJS(req: Request, templatesFolder: String, outputFolder: String, packageName: String, createDtos:Boolean): Outcome<String> {
         return generate(req, templatesFolder, outputFolder, packageName, Language.JS, createDtos)
     }
 
@@ -53,7 +53,7 @@ class CodeGenApi : HostAware {
         packageName: String,
         lang: Language,
         createDtos:Boolean
-    ): Notice<String> {
+    ): Outcome<String> {
 
         val result = this.host?.let { host ->
             val settings = CodeGenSettings(
@@ -71,8 +71,8 @@ class CodeGenApi : HostAware {
             }
             val generator = CodeGen(settings.copy(createDtos = createDtos), builder)
             generator.generate(req)
-            kiit.results.Success("")
-        } ?: kiit.results.Failure("Api Container has not been set")
+            kiit.result.Success("")
+        } ?: kiit.result.Outcomes.rejected("Api Container has not been set")
         return result
     }
 }

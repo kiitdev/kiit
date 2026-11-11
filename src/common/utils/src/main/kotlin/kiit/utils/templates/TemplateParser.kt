@@ -13,9 +13,9 @@ package kiit.utils.templates
 
 import kiit.common.lex.LexState
 import kiit.common.utils.Loops
-import kiit.results.Failure
-import kiit.results.Success
-import kiit.results.Try
+import kiit.result.Failure
+import kiit.result.Success
+import kiit.result.Try
 
 /**
  * Parses a text template that can contain variables/substitutions.
@@ -85,7 +85,7 @@ class TemplateParser(val text: String) {
                 val line = state.line
                 val text = "Error occurred at : line : $line, char : ${state.pos}" + ex.message
                 val err = Exception(text, ex)
-                Failure(err, msg = text)
+                Failure(err)
             }
         return result
     }

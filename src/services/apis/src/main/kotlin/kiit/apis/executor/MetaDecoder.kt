@@ -5,8 +5,8 @@ import kiit.apis.routes.Call
 import kiit.apis.routes.MethodExecutor
 import kiit.common.values.Metadata
 import kiit.requests.Request
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.result.Outcome
+import kiit.result.Outcomes
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 

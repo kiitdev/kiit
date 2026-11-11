@@ -3,8 +3,8 @@ package kiit.entities.features
 import kiit.common.data.DataAction
 import kiit.entities.Entity
 import kiit.entities.core.EntityOps
-import kiit.results.Try
-import kiit.results.builders.Tries
+import kiit.result.Try
+import kiit.result.Tries
 
 interface Saves<TId, T> : EntityOps<TId, T> where TId : kotlin.Comparable<TId>, T : Entity<TId> {
 
@@ -20,18 +20,18 @@ interface Saves<TId, T> : EntityOps<TId, T> where TId : kotlin.Comparable<TId>, 
                     false -> {
                         val finalEntity = applyFieldData(DataAction.Create, item)
                         val id = repo().create(finalEntity)
-                        if (isCreated(id)) Tries.success(id) else Tries.errored("Error creating item")
+                        if (isCreated(id)) Tries.success(id) else Tries.rejected("Error creating item")
                     }
                     true -> {
                         val finalEntity = applyFieldData(DataAction.Update, item)
                         val updated = repo().update(finalEntity)
-                        if (updated) Tries.success(finalEntity.identity()) else Tries.errored("Error updating item")
+                        if (updated) Tries.success(finalEntity.identity()) else Tries.rejected("Error updating item")
                     }
                 }
                 saveResult
-            } ?: Tries.errored("Entity not provided")
+            } ?: Tries.rejected("Entity not provided")
         } catch (ex: Exception) {
-            Tries.errored<TId>(ex)
+            Tries.rejected<TId>(ex)
         }
         return result
     }

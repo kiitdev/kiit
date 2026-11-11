@@ -1,7 +1,7 @@
 package kiit.tasks
 
 import kiit.common.Identity
-import kiit.results.Outcome
+import kiit.result.Outcome
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass

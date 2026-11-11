@@ -14,8 +14,7 @@ package kiit.cli
 
 import kiit.common.args.Args
 import kiit.requests.Response
-import kiit.results.Codes
-import kiit.results.Passed
+import kiit.codes.Passed
 
 /**
  * General purpose class to model a Response at an application boundary ( such as http response )
@@ -54,8 +53,8 @@ data class CliResponse<out T>(
         val empty = CliResponse(
                 CliRequest.build(Args.empty(), ""),
                 true,
-                Codes.SUCCESS.name,
-                Passed::Succeeded.name,
+                Passed.Succeeded.SUCCESS.name,
+                Passed.Succeeded.SUCCESS.group,
                 1,
                 mapOf(),
                 "empty"

@@ -17,8 +17,9 @@ import kiit.utils.templates.Templates
 import kiit.common.types.Countries
 import kiit.common.types.Country
 import kiit.http.HttpRPC
-import kiit.results.*
-import kiit.results.builders.Outcomes
+import kiit.result.*
+import kiit.codes.*
+import kiit.result.Outcomes
 
 /**
  * simple service to send sms messages using Twilio with support for templates and
@@ -94,7 +95,7 @@ class TwilioSms(
                 )
                 Success(request)
             }
-            is Failure -> Outcomes.errored(phoneResult.desc)
+            is Failure -> Failure(phoneResult.error, phoneResult.status)
         }
     }
 
@@ -104,7 +105,7 @@ class TwilioSms(
      * @param phone
      * @return
      */
-    override fun massagePhone(iso: String, phone: String): Notice<String> {
+    override fun massagePhone(iso: String, phone: String): Outcome<String> {
         // Remove the "+" and allow base function to ensure the country code is present
         val result = super.massagePhone(iso, phone.replace("+", ""))
         return when (result) {

@@ -1,7 +1,7 @@
 package kiit.policy.policies
 
 import kiit.policy.Policy
-import kiit.results.Outcome
+import kiit.result.Outcome
 
 /**
  * Policy to rewrite / transform the input before applying the operation

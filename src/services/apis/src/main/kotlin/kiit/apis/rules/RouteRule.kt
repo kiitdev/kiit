@@ -1,8 +1,8 @@
 package kiit.apis.rules
 
 import kiit.apis.ApiRequest
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.result.Outcome
+import kiit.result.Outcomes
 
 object RouteRule {
 

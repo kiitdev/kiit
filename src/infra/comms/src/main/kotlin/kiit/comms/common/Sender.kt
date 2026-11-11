@@ -4,8 +4,9 @@ import okhttp3.Request
 import okhttp3.Response
 import kiit.http.HttpRPC
 import kiit.http.awaitHttpOutcome
-import kiit.results.*
-import kiit.results.builders.Outcomes
+import kiit.result.*
+import kiit.codes.*
+import kiit.result.Outcomes
 
 interface Sender<T> {
 
@@ -34,7 +35,7 @@ interface Sender<T> {
      */
     suspend fun send(model: T): Outcome<String> {
         return if (!isEnabled(model)) {
-            Outcomes.ignored("Not enabled")
+            Outcomes.excluded("Not enabled", Passed.Excluded.SKIPPED)
         } else {
             validate(model)
                 .then { build(it)   }
@@ -49,7 +50,7 @@ interface Sender<T> {
      */
     fun sendSync(model: T): Outcome<String> {
         return if (!isEnabled(model)) {
-            Outcomes.ignored("Not enabled")
+            Outcomes.excluded("Not enabled", Passed.Excluded.SKIPPED)
         } else {
             validate(model)
                 .then { build(it)     }
@@ -81,11 +82,10 @@ interface Sender<T> {
             Outcomes.success(response.body()?.string() ?: "")
         } else {
             val code = response.code()
-            when {
-                code.isFilteredOut()       -> Outcomes.ignored(response.message())
-                code.isInBadRequestRange() -> Outcomes.invalid(response.message())
-                code.isInFailureRange()    -> Outcomes.errored(response.message())
-                else                       -> Outcomes.unexpected(response.message())
+            when (code) {
+                401, 403    -> Outcomes.restricted(response.message())
+                in 400..499 -> Outcomes.invalid(response.message())
+                else        -> Outcomes.unserved(response.message())
             }
         }
     }

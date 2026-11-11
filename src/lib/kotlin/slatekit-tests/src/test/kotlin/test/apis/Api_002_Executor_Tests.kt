@@ -24,8 +24,8 @@ import kiit.context.AppContext
 import kiit.requests.CommonRequest
 import kiit.requests.Request
 import kiit.requests.toResponse
-import kiit.results.Failure
-import kiit.results.Success
+import kiit.result.Failure
+import kiit.result.Success
 import kiit.serialization.deserializer.json.JsonDeserializer
 import org.threeten.bp.ZoneId
 import test.apis.samples.*
@@ -50,7 +50,7 @@ class Api_002_Executor_Tests : ApiTestsBase() {
             routes = routes(listOf(api(Sample_API_1_Core::class, Sample_API_1_Core(context)))),
             user = null,
             request = CommonRequest.path("$AREA.$NAME.${Sample_API_1_Core::processEmpty.name}", Verbs.POST, mapOf(), mapOf(Pair("code", "1"), Pair("tag", "abc"))),
-            response = Success("ok", msg = "no inputs").toResponse()
+            response = Success("ok no inputs").toResponse()
         )
     }
 
@@ -62,7 +62,7 @@ class Api_002_Executor_Tests : ApiTestsBase() {
             routes = routes(listOf(api(Sample_API_1_Core::class, Sample_API_1_Core(context)))),
             user = null,
             request = CommonRequest.path("$AREA.$NAME.checkName", Verbs.POST, mapOf(), mapOf(Pair("name", "hi 123"))),
-            response = Success("ok", msg = "hi 123 ok").toResponse()
+            response = Success("ok hi 123 ok").toResponse()
         )
     }
 
@@ -80,7 +80,7 @@ class Api_002_Executor_Tests : ApiTestsBase() {
                     Pair("isOn" , true),
                     Pair("date" , DateTimes.of(2019, 10, 30, 8, 30, 45, 0, zone).toString())
             )),
-            response = Success("ok", msg = "inputs p1, 2, true, 2019-10-30T08:30:45-05:00[EST]").toResponse()
+            response = Success("ok inputs p1, 2, true, 2019-10-30T08:30:45-05:00[EST]").toResponse()
         )
     }
 
@@ -106,7 +106,7 @@ class Api_002_Executor_Tests : ApiTestsBase() {
             routes = routes(listOf(api(Sample_API_1_Core::class, Sample_API_1_Core(context)))),
             user = null,
             request = CommonRequest.path("$AREA.$NAME.${Sample_API_1_Core::processRequest.name}", Verbs.POST, mapOf(), mapOf(Pair("id", "2"))),
-            response = Success("ok", msg = "raw send id: 2").toResponse()
+            response = Success("ok raw send id: 2").toResponse()
         )
     }
 
@@ -133,7 +133,7 @@ class Api_002_Executor_Tests : ApiTestsBase() {
                 mapOf(Pair("note", "custom_inputs"))
             ),
             metas = metas,
-            response = Success("custom1=c1, custom2=2, note=custom_inputs", msg = "raw both").toResponse()
+            response = Success("custom1=c1, custom2=2, note=custom_inputs raw both").toResponse()
         )
     }
 
@@ -145,7 +145,7 @@ class Api_002_Executor_Tests : ApiTestsBase() {
             routes = routes(listOf(api(Sample_API_1_Core::class, Sample_API_1_Core(context)))),
             user = null,
             request = CommonRequest.path("$AREA.$NAME.${Sample_API_1_Core::processMeta.name}", Verbs.POST, mapOf(Pair("token", "abc")), mapOf(Pair("id", "2"))),
-            response = Success("ok", msg = "raw meta token: abc").toResponse()
+            response = Success("ok raw meta token: abc").toResponse()
         )
     }
 
@@ -157,7 +157,7 @@ class Api_002_Executor_Tests : ApiTestsBase() {
             routes = routes(listOf(api(Sample_API_1_Core::class, Sample_API_1_Core(context)))),
             user = null,
             request = CommonRequest.path("$AREA.$NAME.${Sample_API_1_Core::processBoth.name}", Verbs.POST, mapOf(Pair("token", "abc")), mapOf(Pair("id", "2"))),
-            response = Success("ok", msg = "raw both").toResponse()
+            response = Success("ok raw both").toResponse()
         )
     }
 
@@ -170,7 +170,7 @@ class Api_002_Executor_Tests : ApiTestsBase() {
             routes = routes(listOf(api(Sample_API_1_Core::class, Sample_API_1_Core(context)))),
             user = null,
             request = CommonRequest.path("$AREA.$NAME.${Sample_API_1_Core::processError.name}", Verbs.POST, mapOf(), mapOf("text" to number)),
-            response = Failure("$number is not a valid number").toResponse()
+            response = Failure("$number is not a valid number", kiit.codes.Failed.Rejected.DEFAULT).toResponse()
         )
     }
 
@@ -182,7 +182,7 @@ class Api_002_Executor_Tests : ApiTestsBase() {
             routes = routes(listOf(api(Sample_API_1_Core::class, Sample_API_1_Core(context)))),
             user = null,
             request = CommonRequest.path("$AREA.$NAME.${Sample_API_1_Core::processInputListInt.name}", Verbs.POST, mapOf(), mapOf(Pair("items", listOf(1, 2, 3)))),
-            response = Success("ok", msg = ",1,2,3").toResponse()
+            response = Success("ok ,1,2,3").toResponse()
         )
     }
 
@@ -194,7 +194,7 @@ class Api_002_Executor_Tests : ApiTestsBase() {
             routes = routes(listOf(api(Sample_API_1_Core::class, Sample_API_1_Core(context)))),
             user = null,
             request = CommonRequest.path("$AREA.$NAME.${Sample_API_1_Core::processInputListString.name}", Verbs.POST, mapOf(), mapOf(Pair("items", "1,2,3"))),
-            response = Success("ok", msg = ",1,2,3").toResponse()
+            response = Success("ok ,1,2,3").toResponse()
         )
     }
 
@@ -206,7 +206,7 @@ class Api_002_Executor_Tests : ApiTestsBase() {
             routes = routes(listOf(api(Sample_API_1_Core::class, Sample_API_1_Core(context)))),
             user = null,
             request = CommonRequest.path("$AREA.$NAME.${Sample_API_1_Core::processInputMap.name}", Verbs.POST, mapOf(), mapOf(Pair("items", mapOf("a" to 1, "b" to 2)))),
-            response = Success("ok", msg = ",a=1,b=2").toResponse()
+            response = Success("ok ,a=1,b=2").toResponse()
         )
     }
 
@@ -218,7 +218,7 @@ class Api_002_Executor_Tests : ApiTestsBase() {
             routes = routes(listOf(api(Sample_API_1_Core::class, Sample_API_1_Core(context)))),
             user = null,
             request = CommonRequest.path("$AREA.$NAME.${Sample_API_1_Core::processInputMap.name}", Verbs.POST, mapOf(), mapOf(Pair("items", "a=1,b=2"))),
-            response = Success("ok", msg = ",a=1,b=2").toResponse()
+            response = Success("ok ,a=1,b=2").toResponse()
         )
     }
 }

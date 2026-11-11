@@ -3,7 +3,7 @@ package kiit.serialization.responses
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import kiit.requests.Response
-import kiit.results.Err
+import kiit.codes.Err
 
 object ResponseEncoder {
 
@@ -11,7 +11,7 @@ object ResponseEncoder {
      * Builds a Slate Kit standardized response object
      * NOTES:
      * 1. code is in the application level status code ( not to be conflated with HTTP status code )
-     * 2. errs is a list of Err types @see[kiit.results.Err]
+     * 2. errs is a list of Err types @see[kiit.codes.Err]
      * 3. tag is used a correlation id
      * 4. meta is for additional metadata to be provided to the client
      * @sample
@@ -48,17 +48,17 @@ object ResponseEncoder {
     /**
      * Recursively flattens the err into the list provided.
      * E.g. Err could be
-     * 1. @see[kiit.results.Err.ErrorInfo]
-     * 2. @see[kiit.results.Err.ErrorField]
-     * 3. @see[kiit.results.Err.ErrorList]
+     * 1. @see[kiit.codes.Err.ErrorInfo]
+     * 2. @see[kiit.codes.Err.ErrorField]
+     * 3. @see[kiit.codes.Err.ErrorList]
      */
     fun flatten(error: Err, list: JSONArray, depth: Int) {
         when (error) {
             is Err.ErrorField -> {
-                build("input", error.field, error.value, error.msg, list)
+                build("input", error.field, error.value, error.message, list)
             }
             is Err.ErrorInfo -> {
-                build("action", null, null, error.msg, list)
+                build("action", null, null, error.message, list)
             }
             is Err.ErrorList -> {
                 if (depth < 3) {

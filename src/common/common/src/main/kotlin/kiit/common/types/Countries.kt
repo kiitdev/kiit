@@ -1,7 +1,7 @@
 package kiit.common.types
 
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.result.Outcome
+import kiit.result.Outcomes
 
 interface CountryLookup {
 

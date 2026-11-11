@@ -1,6 +1,6 @@
 package kiit.common.ext
 
-import kiit.results.Err
+import kiit.codes.Err
 
 
 /**
@@ -13,9 +13,9 @@ fun Err.strings(): List<String> {
     val all = this.flatten()
     return all.map { err ->
         when(err){
-            is Err.ErrorInfo  -> "Error   : " + err.msg
-            is Err.ErrorField -> "Field   : name=" + err.field + ", value=" + err.value + ", msg=" + err.msg
-            else              -> "${err.msg}"
+            is Err.ErrorInfo  -> "Error   : " + err.message
+            is Err.ErrorField -> "Field   : name=" + err.field + ", value=" + err.value + ", msg=" + err.message
+            else              -> "${err.message}"
         }
     }
 }
@@ -35,9 +35,9 @@ fun Err.numbered(): List<String> {
 /**
  * Recursively flattens the err into the list provided.
  * E.g. Err could be
- * 1. @see[kiit.results.Err.ErrorInfo]
- * 2. @see[kiit.results.Err.ErrorField]
- * 3. @see[kiit.results.Err.ErrorList]
+ * 1. @see[kiit.codes.Err.ErrorInfo]
+ * 2. @see[kiit.codes.Err.ErrorField]
+ * 3. @see[kiit.codes.Err.ErrorList]
  */
 fun Err.flatten(): List<Err> {
     return when (this) {

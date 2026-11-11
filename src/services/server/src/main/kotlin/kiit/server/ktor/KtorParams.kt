@@ -39,7 +39,7 @@ data class KtorParams(
     val extraParams: MutableMap<String, Any> = mutableMapOf()
 ) : Inputs, InputsUpdateable, JsonSupport {
 
-    val method = req.httpMethod.value.toLowerCase()
+    val method = req.httpMethod.value.lowercase()
     val hasBody = KtorUtils.isBodyAllowed(req.httpMethod)
     val json = KtorUtils.loadJson(body, req, false)
 

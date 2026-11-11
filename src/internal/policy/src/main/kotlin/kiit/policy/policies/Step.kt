@@ -2,8 +2,9 @@ package kiit.policy.policies
 
 import kiit.common.log.Logger
 import kiit.policy.Policy
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.codes.Failed
+import kiit.result.Outcome
+import kiit.result.Outcomes
 import java.util.concurrent.atomic.AtomicLong
 
 /**
@@ -24,7 +25,7 @@ class Step<I, O>(val steps: Long, val logger: Logger? = null) : Policy<I, O> {
                 res
             }
             false -> {
-                Outcomes.ignored("Skipping periodic execution")
+                Outcomes.rejected("Skipping periodic execution", Failed.Rejected.PRECONDITION_FAILED)
             }
         }
         return result

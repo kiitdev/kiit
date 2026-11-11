@@ -1,8 +1,8 @@
 package test.setup
 
 import kiit.common.checks.Check
-import kiit.results.Notice
-import kiit.results.builders.Notices
+import kiit.result.Outcome
+import kiit.result.Outcomes
 
 
 open class SampleErrorsNoMiddlewareApi  {
@@ -11,16 +11,16 @@ open class SampleErrorsNoMiddlewareApi  {
      * Error-handling using the Result<T> object to model
      * successes and failures for all scenarios
      */
-    fun parseNumberWithResults(text:String): Notice<Int> {
+    fun parseNumberWithResults(text:String): Outcome<Int> {
 
         return if(text.isNullOrEmpty()) {
-            Notices.invalid("You must supply a non-empty string")
+            Outcomes.invalid("You must supply a non-empty string")
         }
         else if(!Check.isNumeric(text)){
-            Notices.errored("$text is not a valid number")
+            Outcomes.rejected("$text is not a valid number")
         }
         else {
-            Notices.success(text.toInt(), "You supplied a valid number")
+            Outcomes.success(text.toInt())
         }
     }
 

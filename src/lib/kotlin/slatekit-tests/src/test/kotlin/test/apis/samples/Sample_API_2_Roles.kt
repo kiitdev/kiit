@@ -16,8 +16,8 @@ package test.apis.samples
 import kiit.apis.*
 import kiit.common.*
 import kiit.apis.core.Roles
-import kiit.results.Outcome
-import kiit.results.Success
+import kiit.result.Outcome
+import kiit.result.Success
 
 
 @Api(area = "app", name = "rolesTest", desc = "api to access and manage users 3", roles= ["admin"], auth = AuthModes.TOKEN, verb = Verbs.AUTO, sources = [Sources.ALL])
@@ -25,30 +25,30 @@ class Sample_API_2_Roles {
 
   @Action(desc = "", roles= [Roles.NONE])
   fun rolesNone(code:Int, tag:String): Outcome<String> {
-    return Success("rolesNone", msg ="${code} ${tag}")
+    return Success("rolesNone ${code} ${tag}")
   }
 
 
   @Action(desc = "", roles=[Roles.ALL])
   fun rolesAny(code:Int, tag:String): Outcome<String> {
-    return Success("rolesAny", msg ="${code} ${tag}")
+    return Success("rolesAny ${code} ${tag}")
   }
 
 
   @Action(desc = "", roles= ["dev"])
   fun rolesSpecific(code:Int, tag:String): Outcome<String>  {
-    return Success("rolesSpecific", msg ="${code} ${tag}")
+    return Success("rolesSpecific ${code} ${tag}")
   }
 
 
   @Action(desc = "", roles= [Roles.PARENT])
   fun rolesParent(code:Int, tag:String): Outcome<String> {
-    return Success("rolesParent", msg ="${code} ${tag}")
+    return Success("rolesParent ${code} ${tag}")
   }
 
 
   @Action(desc = "", auth = AuthModes.KEYED, roles=[Roles.ALL])
   fun authOverride(code:Int, tag:String): Outcome<String> {
-    return Success("authOverride", msg ="${code} ${tag}")
+    return Success("authOverride ${code} ${tag}")
   }
 }

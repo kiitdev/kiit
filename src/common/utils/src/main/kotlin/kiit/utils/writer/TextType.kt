@@ -28,7 +28,7 @@ sealed class TextType(val name: String, val color: String, private val upperCase
     object Raw : TextType("raw", "", false, false)
 
     fun format(text: String): String {
-        return if (upperCase) text.toUpperCase() else text
+        return if (upperCase) text.uppercase() else text
     }
 
     companion object {
@@ -38,7 +38,7 @@ sealed class TextType(val name: String, val color: String, private val upperCase
          * @param mode
          */
         fun parse(mode: String): TextType {
-            return when (mode.toLowerCase()) {
+            return when (mode.lowercase()) {
                 Title.name -> Title
                 Subtitle.name -> Subtitle
                 Url.name -> Url

@@ -15,8 +15,8 @@ package test.apis.samples
 
 import kiit.apis.*
 import kiit.common.*
-import kiit.results.Outcome
-import kiit.results.Success
+import kiit.result.Outcome
+import kiit.result.Success
 
 @Api(area = "samples", name = "core", desc = "api to access and manage users 3", auth = AuthModes.NONE, sources = [Sources.ALL])
 class Sample_API_1_Protocol {
@@ -24,18 +24,18 @@ class Sample_API_1_Protocol {
 
     @Action()
     fun processParent(name:String): Outcome<String> {
-        return Success("ok", msg = "via parent:$name")
+        return Success("ok via parent:$name")
     }
 
 
     @Action( sources = [Sources.CLI])
     fun processCLI(name:String): Outcome<String> {
-        return Success("ok", msg = "via cli:$name")
+        return Success("ok via cli:$name")
     }
 
 
     @Action( sources = [Sources.WEB])
     fun processWeb(name:String): Outcome<String> {
-        return Success("ok", msg = "via web:$name")
+        return Success("ok via web:$name")
     }
 }

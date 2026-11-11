@@ -9,8 +9,8 @@ import kiit.entities.EntityOptions
 import kiit.meta.Reflector
 import kiit.meta.kClass
 import kiit.query.Update
-import kiit.results.Try
-import kiit.results.builders.Tries
+import kiit.result.Try
+import kiit.result.Tries
 
 interface Updates<TId, T> : EntityOps<TId, T> where TId : kotlin.Comparable<TId>, T : Entity<TId> {
 
@@ -66,7 +66,7 @@ interface Updates<TId, T> : EntityOps<TId, T> where TId : kotlin.Comparable<TId>
      * @return
      */
     suspend fun updateAsTry(entity: T): Try<Boolean> {
-        return Tries.of { update(entity) }
+        return Tries.attempt { update(entity) }
     }
 
     /**

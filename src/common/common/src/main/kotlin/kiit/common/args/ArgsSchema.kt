@@ -12,8 +12,8 @@
 package kiit.common.args
 
 import kiit.common.Types
-import kiit.results.Try
-import kiit.results.builders.Tries
+import kiit.result.Try
+import kiit.result.Tries
 
 
 /**
@@ -227,7 +227,7 @@ class ArgsSchema(val items: List<Arg> = listOf(), val builder:ArgsWriter? = null
         @JvmStatic fun validate(schema: ArgsSchema, args: Args): Try<Boolean> {
             val missing = schema.items.filter { arg -> arg.isRequired && !args.containsKey(arg.name) }
             return if (missing.isNotEmpty()) {
-                Tries.errored("invalid arguments supplied: Missing : " + missing.first().name)
+                Tries.rejected("invalid arguments supplied: Missing : " + missing.first().name)
             } else {
                 Tries.success(true)
             }

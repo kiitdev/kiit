@@ -1,7 +1,6 @@
 
 # Foundational
 cd ./common/
-cd result        && gradle clean build && cd ../ && echo 'sleeping 20s' && sleep 20s     
 cd common        && gradle clean build && cd ../ && echo 'sleeping 20s' && sleep 20s   
 cd utils         && gradle clean build && cd ../ && echo 'sleeping 20s' && sleep 20s   
 cd requests      && gradle clean build && cd ../ && echo 'sleeping 20s' && sleep 20s     

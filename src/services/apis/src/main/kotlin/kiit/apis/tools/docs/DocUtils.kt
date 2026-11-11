@@ -4,8 +4,8 @@ import kiit.apis.ApiConstants
 import kiit.apis.core.Part
 import kiit.common.args.ArgsCheck
 import kiit.requests.Request
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.result.Outcome
+import kiit.result.Outcomes
 
 object DocUtils {
     fun isHelp(request: Request): Outcome<Part> {
@@ -18,7 +18,7 @@ object DocUtils {
             ArgsCheck.isHelp(request.parts, 2) -> Outcomes.success(Part.Api)
             // Case 3d: Help on action ?
             ArgsCheck.isHelp(request.parts, 3) -> Outcomes.success(Part.Action)
-            else -> Outcomes.errored("Unknown help option")
+            else -> Outcomes.rejected("Unknown help option")
         }
     }
 

@@ -35,16 +35,14 @@
       "stability"  : "stable",
       "published"  : true,
       "migration"  : {
-        "status"            : "pending",
-        "currentArtifactId" : "slatekit-result",
-        "currentPackage"    : "slatekit.results",
-        "currentLocation"   : "src/lib/kotlin/slatekit-common/src/main/kotlin/slatekit/results",
-        "desiredLocation"   : "src/core/result",
-        "notes"             : ""
+        "status"            : "removed",
+        "currentArtifactId" : "kiit-results",
+        "currentPackage"    : "kiit.results",
+        "currentLocation"   : "src/common/result",
+        "desiredLocation"   : "",
+        "notes"             : "Extracted to github.com/kiitdev/kiit-result (dev.kiit:kiit-result, package kiit.result). Monolith copy deleted; modules depend on the published artifact."
       },
       "docs": {
-        "exampleFile": "src/apps/kotlin/slatekit-examples/src/main/kotlin/slatekit/examples/Example_Result.kt",
-        "readme"     : "src/core/result/README.md",
         "tags"       : ["import_required", "import_examples", "examples", "examples_support", "output"]
       }
     },
@@ -59,16 +57,14 @@
       "stability"  : "stable",
       "published"  : true,
       "migration"  : {
-        "status"            : "complete",
-        "currentArtifactId" : "slatekit-common",
-        "currentPackage"    : "slatekit.common.codes",
-        "currentLocation"   : "src/lib/kotlin/slatekit-common/src/main/kotlin/slatekit/common/codes",
-        "desiredLocation"   : "src/core/codes",
-        "notes"             : ""
+        "status"            : "removed",
+        "currentArtifactId" : "kiit-codes",
+        "currentPackage"    : "kiit.codes",
+        "currentLocation"   : "src/core/codes",
+        "desiredLocation"   : "",
+        "notes"             : "Extracted to github.com/kiitdev/kiit-codes (dev.kiit:kiit-codes, package kiit.codes), consumed through kiit-result. Monolith copy deleted."
       },
       "docs": {
-        "exampleFile": "src/apps/kotlin/slatekit-examples/src/main/kotlin/slatekit/examples/Example_Codes.kt",
-        "readme"     : "src/core/codes/README.md",
         "tags"       : ["import_required", "import_examples", "examples", "output"]
       }
     },

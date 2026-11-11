@@ -11,8 +11,10 @@
 
 package kiit.utils.templates
 
-import kiit.results.Try
-import kiit.results.getOrElse
+import kiit.result.Failure
+import kiit.result.Success
+import kiit.result.Try
+import kiit.result.getOrElse
 
 /**
  * Handles processing of text templates with variables/substitutions inside.
@@ -55,7 +57,7 @@ class Templates(
             content = text,
             parsed = true,
             valid = result.success,
-            status = result.desc,
+            status = result.message(),
             group = null,
             path = null,
             parts = result.getOrElse({ listOf<TemplatePart>() })
@@ -119,7 +121,7 @@ class Templates(
                 resolveParts(parts, substitutions ?: subs)
             }
         } else {
-            result.desc
+            result.message()
         }
         return finalResult
     }
@@ -202,4 +204,9 @@ class Templates(
             return parsed
         }
     }
+}
+
+private fun Try<*>.message(): String? = when (this) {
+    is Failure -> error.message
+    is Success -> status.title
 }

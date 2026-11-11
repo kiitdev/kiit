@@ -3,9 +3,9 @@ package kiit.migrations
 import kiit.common.data.IDb
 import kiit.common.log.LogSupport
 import kiit.common.log.Logger
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
-import kiit.results.builders.Tries
+import kiit.result.Outcome
+import kiit.result.Outcomes
+import kiit.result.Tries
 
 data class SimpleMigration(
     override val desc: String,
@@ -17,9 +17,9 @@ data class SimpleMigration(
 
     override fun migrate(db: IDb): Outcome<Int> {
         info("Migration starting for : $id")
-        val results = steps.map { Tries.of { it.run(db) } }
+        val results = steps.map { Tries.attempt { it.run(db) } }
         val success = results.all { it.success }
-        val message = if (success) "" else results.first { !it.success }.desc
+        val message = if (success) "" else (results.first { !it.success } as kiit.result.Failure).error.message.orEmpty()
         return when (success) {
             true -> {
                 info("Migration success : $id. \n $message")
@@ -27,7 +27,7 @@ data class SimpleMigration(
             }
             false -> {
                 info("Migration failure : $id. \n $message")
-                Outcomes.errored(message)
+                Outcomes.rejected(message)
             }
         }
     }

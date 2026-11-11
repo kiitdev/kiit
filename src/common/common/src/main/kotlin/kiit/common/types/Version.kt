@@ -1,9 +1,9 @@
 package kiit.common.types
 
 import kiit.common.checks.Check
-import kiit.results.Failure
-import kiit.results.Notice
-import kiit.results.Success
+import kiit.result.Outcome
+import kiit.result.Outcomes
+import kiit.result.Success
 
 data class Version(
     val major: Int,
@@ -43,11 +43,11 @@ data class Version(
 
 
         @JvmStatic
-        fun parse(text:String): Notice<Version> {
+        fun parse(text:String): Outcome<Version> {
             val tokens = text.trim().split('.')
             val numeric = tokens.all { Check.isWholeNumber(it) }
             return if(!numeric) {
-                Failure("Not all parts of the version are numeric")
+                Outcomes.rejected("Not all parts of the version are numeric")
             } else {
                 val parts = tokens.map { it.trim() }
                 when (tokens.size) {
@@ -56,7 +56,7 @@ data class Version(
                     3 -> Success(Version(parts[0].toInt(), parts[1].toInt(), parts[2].toInt()))
                     4 -> Success(Version(parts[0].toInt(), parts[1].toInt(), parts[2].toInt(), parts[3].toInt()))
                     5 -> Success(Version(parts[0].toInt(), parts[1].toInt(), parts[2].toInt(), parts[3].toInt(), parts[4]))
-                    else -> Failure("Invalid version, expected 4-5 parts separated by . e.g. 1.2.3.4.ABC")
+                    else -> Outcomes.rejected("Invalid version, expected 4-5 parts separated by . e.g. 1.2.3.4.ABC")
                 }
             }
         }

@@ -23,9 +23,9 @@ import kiit.common.args.ArgsSchema
 import kiit.common.crypto.Encryptor
 import kiit.common.info.About
 import kiit.providers.logback.LogbackLogs
-import kiit.results.Success
-import kiit.results.Try
-import kiit.results.getOrElse
+import kiit.result.Success
+import kiit.result.Try
+import kiit.result.getOrElse
 import test.TestApp
 
 
@@ -214,7 +214,7 @@ class AppTests {
      */
     class AppArgsSchemaNull(args: Array<String>?) : App(AppContext.empty) {
 
-        override fun execute(): Try<Any> = Success("ok", msg = "schema null")
+        override fun execute(): Try<Any> = Success("ok schema null")
     }
 
 
@@ -227,7 +227,7 @@ class AppTests {
             schema: ArgsSchema? = ArgsSchema(listOf<Arg>())
     ) : App(AppContext.empty) {
 
-        override fun execute(): Try<Any> = Success("ok", msg = "schema empty")
+        override fun execute(): Try<Any> = Success("ok schema empty")
     }
 
 
@@ -244,7 +244,7 @@ class AppTests {
                     .text("log.level", "the log level for logging", false, "info", "info", "debug|info|warn|error")
     ) : App(AppContext.empty) {
 
-        override fun execute(): Try<Any> = Success("ok", msg = "schema basic")
+        override fun execute(): Try<Any> = Success("ok schema basic")
     }
 
 
@@ -261,7 +261,7 @@ class AppTests {
                     .text("log.level", "the log level for logging", false, "info", "info", "debug|info|warn|error")
     ) : App(AppContext.empty) {
 
-        override fun execute(): Try<Any> = Success("ok", msg = "schema args 1")
+        override fun execute(): Try<Any> = Success("ok schema args 1")
     }
 
 

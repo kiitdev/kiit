@@ -20,9 +20,8 @@ import kiit.common.info.Credentials
 import kiit.requests.CommonRequest
 import kiit.common.Source
 import kiit.requests.toResponse
-import kiit.results.Success
-import kiit.results.builders.Notices
-import kiit.results.builders.Outcomes
+import kiit.result.Success
+import kiit.result.Outcomes
 import test.apis.samples.Sample_API_2_Roles
 
 /**
@@ -45,7 +44,7 @@ class Api_Security_Tests : ApiTestsBase() {
                     Pair("tag", "abc")
                 )
             ),
-            response = Success("rolesAny", msg = "1 abc").toResponse()
+            response = Success("rolesAny 1 abc").toResponse()
         )
 
         checkCall(
@@ -58,7 +57,7 @@ class Api_Security_Tests : ApiTestsBase() {
                     Pair("tag", "abc")
                 )
             ),
-            response = Success("rolesAny", msg = "1 abc").toResponse()
+            response = Success("rolesAny 1 abc").toResponse()
         )
 
         checkCall(
@@ -71,7 +70,7 @@ class Api_Security_Tests : ApiTestsBase() {
                     Pair("tag", "abc")
                 )
             ),
-            response = Outcomes.denied<Any>("unauthorized").toResponse()
+            response = Outcomes.restricted<Any>("unauthorized").toResponse()
         )
     }
 
@@ -88,7 +87,7 @@ class Api_Security_Tests : ApiTestsBase() {
                     Pair("tag", "abc")
                 )
             ),
-            response = Notices.denied<String>(msg = "Unable to authorize, authorization provider not set").toResponse()
+            response = Outcomes.restricted<String>("Unable to authorize, authorization provider not set").toResponse()
         )
     }
 
@@ -105,7 +104,7 @@ class Api_Security_Tests : ApiTestsBase() {
                     Pair("tag", "abc")
                 )
             ),
-            response = Success("rolesSpecific", msg = "1 abc").toResponse()
+            response = Success("rolesSpecific 1 abc").toResponse()
         )
     }
 
@@ -122,7 +121,7 @@ class Api_Security_Tests : ApiTestsBase() {
                     Pair("tag", "abc")
                 )
             ),
-            response = Notices.denied<String>("unauthorized").toResponse()
+            response = Outcomes.restricted<String>("unauthorized").toResponse()
         )
     }
 
@@ -139,7 +138,7 @@ class Api_Security_Tests : ApiTestsBase() {
                     Pair("tag", "abc")
                 )
             ),
-            response = Success("rolesParent", msg = "1 abc").toResponse()
+            response = Success("rolesParent 1 abc").toResponse()
         )
     }
 
@@ -156,7 +155,7 @@ class Api_Security_Tests : ApiTestsBase() {
                     Pair("tag", "abc")
                 )
             ),
-            response = Notices.denied<String>("unauthorized").toResponse()
+            response = Outcomes.restricted<String>("unauthorized").toResponse()
         )
     }
 
@@ -176,7 +175,7 @@ class Api_Security_Tests : ApiTestsBase() {
                     Pair("tag", "abc")
                 )
             ),
-            response = Success("rolesAny", msg = "1 abc").toResponse()
+            response = Success("rolesAny 1 abc").toResponse()
         )
     }
 
@@ -193,7 +192,7 @@ class Api_Security_Tests : ApiTestsBase() {
                     Pair("tag", "abc")
                 )
             ),
-            response = Notices.denied<String>(msg = "Unable to authorize, authorization provider not set").toResponse()
+            response = Outcomes.restricted<String>("Unable to authorize, authorization provider not set").toResponse()
         )
     }
 
@@ -212,7 +211,7 @@ class Api_Security_Tests : ApiTestsBase() {
                     Pair("tag", "abc")
                 )
             ),
-            response = Success("rolesSpecific", msg = "1 abc").toResponse()
+            response = Success("rolesSpecific 1 abc").toResponse()
         )
     }
 
@@ -231,7 +230,7 @@ class Api_Security_Tests : ApiTestsBase() {
                     Pair("tag", "abc")
                 )
             ),
-            response = Notices.denied<String>("unauthorized").toResponse()
+            response = Outcomes.restricted<String>("unauthorized").toResponse()
         )
     }
 
@@ -250,7 +249,7 @@ class Api_Security_Tests : ApiTestsBase() {
                     Pair("tag", "abc")
                 )
             ),
-            response = Success("rolesParent", msg = "1 abc").toResponse()
+            response = Success("rolesParent 1 abc").toResponse()
         )
     }
 
@@ -269,7 +268,7 @@ class Api_Security_Tests : ApiTestsBase() {
                     Pair("tag", "abc")
                 )
             ),
-            response = Notices.denied<String>("unauthorized").toResponse()
+            response = Outcomes.restricted<String>("unauthorized").toResponse()
         )
     }
 
@@ -288,7 +287,7 @@ class Api_Security_Tests : ApiTestsBase() {
                     Pair("tag", "abc")
                 )
             ),
-            response = Success("authOverride", msg = "1 abc").toResponse()
+            response = Success("authOverride 1 abc").toResponse()
         )
     }
 
@@ -307,7 +306,7 @@ class Api_Security_Tests : ApiTestsBase() {
                     Pair("tag", "abc")
                 )
             ),
-            response = Notices.errored<String>("unauthorized").toResponse()
+            response = Outcomes.rejected<String>("unauthorized").toResponse()
         )
     }
 }

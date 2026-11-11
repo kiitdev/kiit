@@ -1,11 +1,10 @@
 buildscript {
-    ext.kotlin_version = '1.9.25'
+    ext.kotlin_version = '2.3.21'
     ext.ktor_version = '2.3.12'
     ext.kiit_version = file('../../../version.txt').text
     ext.kiit_version_beta = file('../../../version-beta.txt').text
 
     repositories {
-        jcenter()
         mavenCentral()
     }
     dependencies {
@@ -40,20 +39,17 @@ apply from: '../../../../build/gradle/gradle-utils.gradle'
 apply plugin: 'application'
 
 compileJava {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
-compileKotlin {
-    kotlinOptions.jvmTarget = '1.8'
-}
-
-compileTestKotlin {
-    kotlinOptions.jvmTarget = '1.8'
+kotlin {
+  compilerOptions {
+    jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
+  }
 }
 
 repositories {
-    jcenter()
     mavenCentral()
     maven {
         url "https://maven.pkg.github.com/slatekit/kiit"
@@ -77,9 +73,10 @@ dependencies {
 //    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
     implementation 'org.threeten:threetenbp:1.3.8'
 
+    implementation "dev.kiit:kiit-result:1.2.0"
+
     // /* <kiit_local>
     if( kiitSetupViaBinary ) {
-        implementation "dev.kiit:results:$kiit_version"
         implementation "dev.kiit:common:$kiit_version"
         implementation "dev.kiit:context:$kiit_version"
         implementation "dev.kiit:app:$kiit_version"
@@ -110,7 +107,6 @@ dependencies {
 //        implementation "dev.kiit:server:$kiit_version"
     } else {
         // */
-    implementation project(":kiit-result")
     implementation project(":kiit-common")
     implementation project(":kiit-utils")
     implementation project(":kiit-context")

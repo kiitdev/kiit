@@ -19,8 +19,9 @@ import kiit.apis.tools.docs.DocUtils
 import kiit.common.types.Content
 import kiit.common.types.Contents
 import kiit.requests.Request
-import kiit.results.*
-import kiit.results.builders.Outcomes
+import kiit.result.*
+import kiit.codes.*
+import kiit.result.Outcomes
 
 
 open class Help(val host: ApiServer, val routes: DefaultRouter, val docKey: String?, val docBuilder: () -> Doc) {
@@ -43,7 +44,7 @@ open class Help(val host: ApiServer, val routes: DefaultRouter, val docKey: Stri
      */
     fun build(req: Request, helpType: Part): Outcome<Content> {
         return if (!DocUtils.hasDocKey(req, docKey ?: "")) {
-            Outcomes.denied("Unauthorized access to API docs")
+            Outcomes.restricted("Unauthorized access to API docs")
         } else {
             val content = when (helpType) {
                 // 1: ? = help on all

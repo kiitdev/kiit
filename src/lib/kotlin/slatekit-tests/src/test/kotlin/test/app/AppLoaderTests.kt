@@ -13,6 +13,7 @@
 
 package slate.test
 
+import kiit.codes.Passed
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Test
@@ -20,9 +21,9 @@ import kiit.context.Context
 import kiit.common.info.About
 import kiit.app.App
 import kiit.app.AppRunner
-import kiit.results.Status
-import kiit.results.Codes
-import kiit.results.Success
+import kiit.codes.Status
+import kiit.codes.Codes
+import kiit.result.Success
 import test.TestApp
 
 
@@ -34,7 +35,7 @@ class AppLoaderTests  {
         run(
                 arrayOf("-env='loc'"),
                 ConfigValueTest("loc", "env loc", 1, 20.1),
-                Codes.SUCCESS
+                Passed.Succeeded.SUCCESS
         )
     }
 
@@ -43,7 +44,7 @@ class AppLoaderTests  {
         run(
                 arrayOf("-env='dev'"),
                 ConfigValueTest("dev", "env dev", 2, 20.2),
-                Codes.SUCCESS
+                Passed.Succeeded.SUCCESS
         )
     }
 
@@ -52,7 +53,7 @@ class AppLoaderTests  {
         run(
                 arrayOf("-env='qat'"),
                 ConfigValueTest("qat", "env qat", 3, 20.3),
-                Codes.SUCCESS
+                Passed.Succeeded.SUCCESS
         )
     }
 
@@ -70,8 +71,7 @@ class AppLoaderTests  {
             )
 
             Assert.assertEquals(true, result.success)
-            Assert.assertEquals(status.code, result.code)
-            Assert.assertEquals(status.desc, result.desc)
+            Assert.assertEquals(status, result.status)
             val actual = result as Success<ConfigValueTest>
             Assert.assertTrue(value == actual.value)
         }

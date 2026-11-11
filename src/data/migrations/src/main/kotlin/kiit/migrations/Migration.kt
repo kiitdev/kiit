@@ -1,7 +1,7 @@
 package kiit.migrations
 
 import kiit.common.data.IDb
-import kiit.results.Outcome
+import kiit.result.Outcome
 
 interface Migration {
 

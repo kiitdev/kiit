@@ -14,7 +14,7 @@ sealed class Reserved(val id: String) {
 
     companion object {
 
-        fun parse(name: String): Reserved = when (name.trim().toLowerCase()) {
+        fun parse(name: String): Reserved = when (name.trim().lowercase()) {
             Exit   .id -> Exit
             Quit   .id -> Quit
             Version.id -> Version

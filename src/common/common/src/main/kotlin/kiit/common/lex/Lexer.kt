@@ -11,10 +11,10 @@
 
 package kiit.common.lex
 
-import kiit.results.Failure
-import kiit.results.Success
-import kiit.results.Try
-import kiit.results.getOrElse
+import kiit.result.Failure
+import kiit.result.Success
+import kiit.result.Try
+import kiit.result.getOrElse
 
 /**
  * Created by kreddy on 3/2/2016.
@@ -27,7 +27,11 @@ open class Lexer(val text: String) {
     fun parse(): LexResult {
         val res = getTokens()
         val tokens = res.getOrElse({ listOf<Token>() })
-        return LexResult(res.success, res.desc.orEmpty(), tokens, tokens.size, false, null)
+        val message = when (res) {
+            is Failure -> res.error.message.orEmpty()
+            is Success -> res.status.title
+        }
+        return LexResult(res.success, message, tokens, tokens.size, false, null)
     }
 
     fun getTokens(batchSize: Int = -1): Try<List<Token>> {
@@ -96,7 +100,7 @@ open class Lexer(val text: String) {
             val line = state.line
             val cpos = state.charPos
             val text = "Error occurred at : line : $line, char : $cpos"
-            Failure(ex, msg = text)
+            Failure(Exception(text, ex))
         }
         return result
     }

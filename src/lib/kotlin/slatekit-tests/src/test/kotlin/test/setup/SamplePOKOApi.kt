@@ -5,9 +5,10 @@ import kiit.apis.Api
 import kiit.apis.AuthModes
 import kiit.common.DateTime
 import kiit.requests.Request
-import kiit.results.Failure
-import kiit.results.Notice
-import kiit.results.Success
+import kiit.result.Failure
+import kiit.result.Outcome
+import kiit.result.Outcomes
+import kiit.result.Success
 
 
 /**
@@ -58,7 +59,7 @@ open class SamplePOKOApi {
 
 
     @Action
-    fun response(guess:Int): Notice<Int> = if(guess == 1) Success(1, msg = "Correct") else Failure("Try again")
+    fun response(guess:Int): Outcome<Int> = if(guess == 1) Success(1) else Outcomes.rejected("Try again")
 
 
     /**

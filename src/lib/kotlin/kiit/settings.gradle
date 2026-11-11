@@ -1,13 +1,10 @@
 pluginManagement {
     plugins {
-        id "org.jetbrains.kotlin.jvm" version "1.9.25"
+        id "org.jetbrains.kotlin.jvm" version "2.3.21"
     }
 }
 
 rootProject.name = 'kiit'
-
-include ':kiit-result'
-project(':kiit-result').projectDir=new File('../../../common/result')
 
 include ':kiit-common'
 project(':kiit-common').projectDir=new File('../../../common/common')

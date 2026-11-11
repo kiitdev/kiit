@@ -6,7 +6,7 @@ import kiit.apis.AuthModes
 import kiit.apis.Verbs
 import kiit.context.Context
 import kiit.common.Sources
-import kiit.results.Try
+import kiit.result.Try
 
 @Api(area = "slatekit", name = "docs", desc= "help doc generator",
         auth = AuthModes.KEYED, roles = ["admin"], verb = Verbs.AUTO, sources = [Sources.CLI])

@@ -17,11 +17,11 @@ import kiit.common.*
 import kiit.common.utils.Random.uuid
 import kiit.common.io.Uris
 import kiit.common.utils.Random
-import kiit.results.Codes
-import kiit.results.Failure
-import kiit.results.Success
-import kiit.results.Try
-import kiit.results.builders.Tries
+import kiit.codes.Codes
+import kiit.result.Failure
+import kiit.result.Success
+import kiit.result.Try
+import kiit.result.Tries
 import java.io.File
 import java.util.concurrent.LinkedBlockingQueue
 
@@ -121,7 +121,7 @@ class InMemoryQueue<T>(
      */
     override fun done(entry: QueueEntry<T>?):Try<QueueEntry<T>> {
         return entry?.let {
-            Tries.of {
+            Tries.attempt {
                 discard(it)
                 it
             }
@@ -148,8 +148,8 @@ class InMemoryQueue<T>(
             val value = converter.decode(content)
             value?.let {
                 send(it, tagName, tagValue)
-            } ?: kiit.results.Failure(Exception("Invalid file path: $fileNameLocal"))
-        } ?: kiit.results.Failure(Exception("Invalid file path: $fileNameLocal"))
+            } ?: kiit.result.Failure(Exception("Invalid file path: $fileNameLocal"))
+        } ?: kiit.result.Failure(Exception("Invalid file path: $fileNameLocal"))
     }
 
     /**

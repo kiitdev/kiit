@@ -1,7 +1,7 @@
 package kiit.policy.hooks
 
 import kiit.common.Ignore
-import kiit.results.Outcome
+import kiit.result.Outcome
 
 /**
  * A "Filter" based middle-ware that either allows/disallows an API call to proceed
@@ -14,7 +14,7 @@ interface Filter<TReq> : Middleware {
     /**
      * Middleware to filter a request
      * @param req : The request ( e.g. call )
-     * @sample: kiit.results.Success("")
+     * @sample: kiit.result.Success("")
      */
     @Ignore
     suspend fun filter(req: TReq): Outcome<TReq>

@@ -21,9 +21,9 @@ import kiit.common.values.Metadata
 import kiit.context.Context
 import kiit.meta.JSONRestoreWithContext
 import kiit.meta.JSONTransformer
-import kiit.results.Outcome
-import kiit.results.Success
-import kiit.results.builders.Outcomes
+import kiit.result.Outcome
+import kiit.result.Success
+import kiit.result.Outcomes
 import org.json.simple.JSONObject
 
 @Api(area = "samples", name = "core", desc = "api to access and manage users 3", auth = AuthModes.NONE)
@@ -32,66 +32,66 @@ class Sample_API_1_Core(context: Context) {
 
     @Action( desc = "processes an request with 0 parameters")
     fun processEmpty(): Outcome<String> {
-        return Success("ok", msg = "no inputs")
+        return Success("ok no inputs")
     }
 
 
     private fun processPrivate(): Outcome<String> {
-        return Success("ok", msg = "this is private")
+        return Success("ok this is private")
     }
 
 
     @Action(name = "checkName", desc = "processes action with name different than method")
     fun processExplicitName(name:String): Outcome<String> {
-        return Success("ok", msg = "$name ok")
+        return Success("ok $name ok")
     }
 
 
     @Action(desc = "activates a users account 3")
     fun processInputs(phone:String, code:Int, isOn:Boolean, date: DateTime): Outcome<String> {
-        return Success("ok", msg = "inputs $phone, $code, $isOn, $date")
+        return Success("ok inputs $phone, $code, $isOn, $date")
     }
 
 
     @Action(desc = "processes a request with raw slatekit Request type")
     fun processRequest(req: Request): Outcome<String> {
-        return Success("ok", msg = "raw send id: " + req.data.getInt("id"))
+        return Success("ok" + " " + "raw send id: " + req.data.getInt("id"))
     }
 
 
     @Action(desc = "processes a request with raw slatekit Meta type")
     fun processMeta(meta: Metadata): Outcome<String> {
-        return Success("ok", msg = "raw meta token: " + meta.get("token"))
+        return Success("ok" + " " + "raw meta token: " + meta.get("token"))
     }
 
 
     @Action(desc = "processes a request with raw request, meta")
     fun processBoth(req:Request, meta: Metadata): Outcome<String> {
-        return Success("ok", msg = "raw both")
+        return Success("ok raw both")
     }
 
 
     @Action(desc = "processes a request with raw request, meta")
     fun processCustom(req:Request, custom1:Custom1, custom2: Custom2, note:String): Outcome<String> {
-        return Success("custom1=${custom1.name}, custom2=${custom2.code}, note=$note", msg = "raw both")
+        return Success("custom1=${custom1.name}, custom2=${custom2.code}, note=$note raw both")
     }
 
 
     @Action(desc = "processes with an Document type")
     fun processFile(doc: ContentFile): Outcome<String> {
-        return Success("ok", msg = String(doc.data))
+        return Success("ok" + " " + String(doc.data))
     }
 
 
     @Action(desc = "gets the current promo code")
     fun processInputListString(items: List<String>): Outcome<String> {
-        return Success("ok", msg = items.fold("", { acc, curr -> acc + "," + curr }))
+        return Success("ok" + " " + items.fold("", { acc, curr -> acc + "," + curr }))
     }
 
 
     @Action(desc = "gets the current promo code")
     fun processInputListInt(items: List<Int>): Outcome<String> {
-        return Success("ok", msg = items.fold("", { acc, curr -> acc + "," + curr.toString() }))
+        return Success("ok" + " " + items.fold("", { acc, curr -> acc + "," + curr.toString() }))
     }
 
 
@@ -99,7 +99,7 @@ class Sample_API_1_Core(context: Context) {
     fun processInputMap(items: Map<String, Int>): Outcome<String> {
         val sortedPairs = items.keys.toList().sortedBy { k: String -> k }.map { key -> Pair(key, items[key]) }
         val delimited = sortedPairs.fold("", { acc, curr -> acc + "," + curr.first + "=" + curr.second })
-        return Success("ok", msg = delimited)
+        return Success("ok" + " " + delimited)
     }
 
 
@@ -109,10 +109,10 @@ class Sample_API_1_Core(context: Context) {
             Outcomes.invalid("You must supply a non-empty string")
         }
         else if(!Check.isNumeric(text)){
-            Outcomes.errored("$text is not a valid number")
+            Outcomes.rejected("$text is not a valid number")
         }
         else {
-            Outcomes.success(text.toInt(), msg = "You supplied a valid number")
+            Outcomes.success(text.toInt())
         }
     }
 }

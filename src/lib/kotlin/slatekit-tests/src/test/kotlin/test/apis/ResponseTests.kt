@@ -35,11 +35,11 @@ class ResponseTests {
             when (val char = toString[i]) {
                 '(', '[', '{' -> {
                     indentLevel++
-                    stringBuilder.appendln(char).append(padding())
+                    stringBuilder.appendLine(char).append(padding())
                 }
                 ')', ']', '}' -> {
                     indentLevel--
-                    stringBuilder.appendln().append(padding()).append(char)
+                    stringBuilder.appendLine().append(padding()).append(char)
                 }
                 ',' -> {
                     stringBuilder.append(char).append(padding())

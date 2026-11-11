@@ -1,8 +1,8 @@
 package kiit.apis.rules
 
 import kiit.apis.ApiRequest
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.result.Outcome
+import kiit.result.Outcomes
 
 
 object AuthRule : Rule {
@@ -19,12 +19,12 @@ object AuthRule : Rule {
         }
         // CASE 2: No auth and action requires roles!
         else if (noAuth) {
-            Outcomes.denied("Auth not configured")
+            Outcomes.restricted("Auth not configured")
         }
         // CASE 3: Proceed to authorize
         else {
             req.auth?.check(req.request, target.action.auth, actionRoles)
-                ?: Outcomes.denied("Auth not configured")
+                ?: Outcomes.restricted("Auth not configured")
         }
         return Outcomes.invalid()
     }

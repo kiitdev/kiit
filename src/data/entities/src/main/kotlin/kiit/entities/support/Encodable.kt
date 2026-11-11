@@ -2,7 +2,7 @@ package kiit.entities.support
 
 import kiit.entities.Entity
 import kiit.meta.models.Model
-import kiit.results.Try
+import kiit.result.Try
 
 /**
  * Encoder for encoding/decoding to a String ( E.g. JSON )

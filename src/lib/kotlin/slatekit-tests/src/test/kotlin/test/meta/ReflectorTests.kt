@@ -31,9 +31,9 @@ import kiit.entities.Entities
 import kiit.connectors.entities.AppEntContext
 import kiit.entities.Column
 import kiit.meta.KTypes
-import kiit.results.Notice
-import kiit.results.Success
-import kiit.results.getOrElse
+import kiit.result.Outcome
+import kiit.result.Success
+import kiit.result.getOrElse
 import org.threeten.bp.ZoneId
 import test.TestApp
 import test.setup.*
@@ -205,10 +205,9 @@ class ReflectorTests : TestSupport {
         val zone = "America/New_York"
         val zoneId = ZoneId.of(zone)
         val res = Reflector.callMethod(ActivationService::class, api, ActivationService::activate.name, arrayOf("123456789", 987, true, DateTimes.of(2017, 5, 27, zoneId = zoneId)))
-        val result = res as Notice<String>
+        val result = res as Outcome<String>
         val v = result.getOrElse { "" }
-        Assert.assertTrue(v == "ok")
-        Assert.assertTrue(result.desc == "activated 123456789, 987, true, 2017-05-27T00:00-04:00[America/New_York]")
+        Assert.assertTrue(v == "ok activated 123456789, 987, true, 2017-05-27T00:00-04:00[America/New_York]")
     }
 
 
@@ -314,8 +313,8 @@ class ReflectorTests : TestSupport {
 
     object ActivationService {
         @Action(desc = "activate")
-        fun activate(phone: String, code: Int, isPremiumUser: Boolean, date: DateTime): Notice<String> =
-                Success("ok", msg = "activated $phone, $code, $isPremiumUser, $date")
+        fun activate(phone: String, code: Int, isPremiumUser: Boolean, date: DateTime): Outcome<String> =
+                Success("ok activated $phone, $code, $isPremiumUser, $date")
 
     }
 

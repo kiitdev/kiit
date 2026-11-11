@@ -1,31 +1,35 @@
 package kiit.common.ext
 
-import kiit.results.*
+import kiit.codes.CodesToHttp
+import kiit.codes.Err
+import kiit.codes.StatusException
+import kiit.result.Failure
+import kiit.result.Result
 
+private val httpCodes = CodesToHttp()
 
 /**
  * De-structured into key/value pairs for structured logging
  */
-fun kiit.results.Result<*, *>.structured(): List<Pair<String, Any?>> {
+fun Result<*, *>.structured(): List<Pair<String, Any?>> {
     return listOf(
-            kiit.results.Result<*, *>::success.name to this.success,
-            kiit.results.Result<*, *>::code.name to this.code,
-            kiit.results.Result<*, *>::desc.name to this.desc
+            "success" to this.success,
+            "code" to httpCodes.toCode(this.status),
+            "desc" to this.status.title
     )
 }
 
 
 /**
- * Builds a list of key/value pairs from the Failure data and possible @see[kiit.results.Err]
+ * Builds a list of key/value pairs from the Failure data and possible @see[kiit.codes.Err]
  * used for structured logging
  */
-fun kiit.results.Failure<*>.structured(): List<Pair<String, Any?>> {
+fun Failure<*>.structured(): List<Pair<String, Any?>> {
     val err = this.error
     return when (err) {
         null -> listOf()
         is Err -> err.strings().mapIndexed { ndx, e -> "Error $ndx" to e }
-        is ExceptionErr -> err.err.strings().mapIndexed { ndx, e -> "Error $ndx" to e }
-        is StatusException -> listOf(StatusException::msg.name to err.msg)
-        else -> listOf(StatusException::msg.name to err.toString())
+        is StatusException -> listOf("message" to err.message)
+        else -> listOf("message" to err.toString())
     }
 }

@@ -2,8 +2,8 @@ package kiit.comms.common
 
 import kiit.common.values.Vars
 import kiit.utils.templates.Templates
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.result.Outcome
+import kiit.result.Outcomes
 
 interface TemplateSender<T> : Sender<T> {
     val templates: Templates?

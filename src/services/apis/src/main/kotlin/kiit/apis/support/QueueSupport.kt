@@ -4,7 +4,7 @@ import kiit.apis.ApiRequest
 import kiit.apis.core.Reqs
 import kiit.common.Source
 import kiit.common.utils.Random
-import kiit.results.Notice
+import kiit.result.Outcome
 
 interface QueueSupport {
 
@@ -12,27 +12,27 @@ interface QueueSupport {
     /**
      * This can be overridden to support custom call-modes
      */
-    suspend fun enueue(request: ApiRequest): Notice<String> {
+    suspend fun enueue(request: ApiRequest): Outcome<String> {
         // Convert from web request to Queued request
         val req = request.request
         val payload = Reqs.toJsonAsQueued(req)
         enueue(Random.uuid(), req.path, payload, req.tag)
-        return kiit.results.Success("Request processed as queue")
+        return kiit.result.Success("Request processed as queue")
     }
 
 
     /**
      * Converts a request for an action that is queued, to an actual queue
      */
-    suspend fun enqueOrProcess(request: ApiRequest): Notice<String> {
+    suspend fun enqueOrProcess(request: ApiRequest): Outcome<String> {
         // Coming in as http request and mode is queued ?
         val req = request.request
 //        return if (req.source != Source.Queue && request.target?.action?.tags?.contains("queued") == true) {
 //            enueue(request)
 //        } else {
-//            kiit.results.Failure("Continue processing")
+//            kiit.result.Failure("Continue processing")
 //        }
-        return kiit.results.Failure("Continue processing")
+        return kiit.result.Outcomes.rejected("Continue processing")
     }
 
 

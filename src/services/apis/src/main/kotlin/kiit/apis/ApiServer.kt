@@ -21,8 +21,9 @@ import kiit.requests.Request
 import kiit.requests.Response
 import kiit.context.Context
 import kiit.serialization.deserializer.Deserializer
-import kiit.results.*
-import kiit.results.builders.Outcomes
+import kiit.result.*
+import kiit.codes.*
+import kiit.result.Outcomes
 import kiit.serialization.deserializer.json.JsonDeserializer
 import org.json.simple.JSONObject
 import kotlin.reflect.KClass
@@ -96,7 +97,7 @@ open class ApiServer(
      * This checks the methods ( associated with the route ) and generates a response based on
      * its inputs( parameter types ) and its return type.
      */
-    fun sample(req: Request, path: File): Notice<String> {
+    fun sample(req: Request, path: File): Outcome<String> {
         return sample(this, req, path)
     }
 
@@ -151,8 +152,11 @@ open class ApiServer(
      * @return
      */
     suspend fun executeAttempt(req: Request): Try<ApiResult> {
-        val result = executeOutcome(req)
-        return result.toTry()
+        return when (val result = executeOutcome(req)) {
+            is Success -> result
+            // toTry() keeps only the status title as the exception message, so carry the error message
+            is Failure -> Failure(result.status.toException(result.error.message, listOf(result.error)), result.status)
+        }
     }
 
     /**
@@ -170,10 +174,10 @@ open class ApiServer(
         } catch (ex: Exception) {
             handleError(req, ex)
             val err = when(ex) {
-                is ExceptionErr -> ex.err
+                is StatusException -> Err.ErrorList(ex.errors, ex.message.orEmpty())
                 else -> Err.ex(ex)
             }
-            Outcomes.errored<Any>(err)
+            Outcomes.rejected<Any>(err)
         }
         return result
     }
@@ -214,13 +218,13 @@ open class ApiServer(
             val instance = req.target
             val hasInstance = instance != null
             when(hasInstance) {
-                false -> Outcomes.errored("Route not mapped")
+                false -> Outcomes.rejected("Route not mapped")
                 true  -> executor.execute(req)
             }
         } catch(ex:Exception){
             when(ex){
-                is ExceptionErr -> Outcomes.unexpected(ex.err, Codes.UNEXPECTED)
-                else            -> Outcomes.unexpected<ApiResult>(ex)
+                is StatusException -> Failure(Err.ErrorList(ex.errors, ex.message.orEmpty()), ex.status)
+                else               -> Outcomes.unserved<ApiResult>(ex)
             }
         }
         return result
@@ -256,7 +260,7 @@ open class ApiServer(
         /**
          * Generates a sample response based on the inputs/outputs
          */
-        fun sample(server:ApiServer, req: Request, path: File): Notice<String> {
+        fun sample(server:ApiServer, req: Request, path: File): Outcome<String> {
             val action = server.get(req)
             val sample = if (action != null ) {
 //                val parameters = when (action) {

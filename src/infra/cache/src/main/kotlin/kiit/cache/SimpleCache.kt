@@ -14,8 +14,8 @@ package kiit.cache
 import kiit.common.Identity
 import kiit.common.log.Logger
 import kiit.common.utils.Random
-import kiit.results.Outcome
-import kiit.results.builders.Outcomes
+import kiit.result.Outcome
+import kiit.result.Outcomes
 import kiit.telemetry.Tracker
 
 /**

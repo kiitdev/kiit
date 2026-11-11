@@ -17,7 +17,7 @@ sealed class SysParam(val id: String) {
 
     companion object {
 
-        fun parse(name: String): SysParam = when (name.trim().toLowerCase()) {
+        fun parse(name: String): SysParam = when (name.trim().lowercase()) {
             Sample.id  -> Sample
             File.id    -> File
             Format.id  -> Format

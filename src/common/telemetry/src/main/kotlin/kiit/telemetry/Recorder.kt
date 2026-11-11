@@ -4,9 +4,8 @@ import kiit.utils.events.Event
 import kiit.common.Identity
 import kiit.common.log.Logger
 import kiit.common.log.LoggerConsole
-import kiit.results.Failed
-import kiit.results.Passed
-import kiit.results.builders.Tries
+import kiit.codes.Passed
+import kiit.result.Tries
 
 /**
  * Used for diagnostics / metrics to record a request/response/failure for some function/operation
@@ -24,13 +23,13 @@ open class Recorder<TRequest, TResponse, TFailure>(val id: Identity,
                                          val counts: Counters,
                                          val lasts : Lasts<TRequest, TResponse, TFailure>?,
                                          val events: Events<TRequest, TResponse, TFailure>?,
-                                         val converter: ((TRequest, kiit.results.Result<TResponse,TFailure>) -> Event)? = null) {
+                                         val converter: ((TRequest, kiit.result.Result<TResponse,TFailure>) -> Event)? = null) {
 
     /**
      * Record all relevant diagnostics
      */
-    fun record(sender: Any, request: TRequest, result: kiit.results.Result<TResponse,TFailure>) {
-        Tries.of {
+    fun record(sender: Any, request: TRequest, result: kiit.result.Result<TResponse,TFailure>) {
+        Tries.attempt {
             // Structured logging ( convert the request/result into an Event
             converter?.let { c -> log(logger, id, c(request, result)) }
 
@@ -46,7 +45,7 @@ open class Recorder<TRequest, TResponse, TFailure>(val id: Identity,
     }
 
 
-    fun log(sender: Any, request: TRequest, result: kiit.results.Result<TResponse,TFailure>){
+    fun log(sender: Any, request: TRequest, result: kiit.result.Result<TResponse,TFailure>){
         // Structured logging ( convert the request/result into an Event
         converter?.let { c -> log(logger, id, c(request, result)) }
     }
@@ -55,19 +54,19 @@ open class Recorder<TRequest, TResponse, TFailure>(val id: Identity,
     /**
      * Stores the last
      */
-    fun last(sender: Any, request: TRequest, result: kiit.results.Result<TResponse,TFailure>){
+    fun last(sender: Any, request: TRequest, result: kiit.result.Result<TResponse,TFailure>){
         // Track the last response
         lasts?.let { lasts.handle(sender, request, result) }
     }
 
 
-    fun count(sender: Any, request: TRequest, result: kiit.results.Result<TResponse,TFailure>){
+    fun count(sender: Any, request: TRequest, result: kiit.result.Result<TResponse,TFailure>){
         // Update metrics
         counts.let { Counters.count(counts, result.status) }
     }
 
 
-    fun event(sender: Any, request: TRequest, result: kiit.results.Result<TResponse,TFailure>){
+    fun event(sender: Any, request: TRequest, result: kiit.result.Result<TResponse,TFailure>){
         // Notify event listeners
         events?.let { events.handle(sender, request, result) }
     }
@@ -78,7 +77,7 @@ open class Recorder<TRequest, TResponse, TFailure>(val id: Identity,
         fun <TRequest, TResponse, TFailure> of(id: Identity,
                                      tags:List<Tag>? = null,
                                      logger: Logger = LoggerConsole(),
-                                     converter: ((TRequest, kiit.results.Result<TResponse,TFailure>) -> Event)? = null): Recorder<TRequest, TResponse, TFailure> {
+                                     converter: ((TRequest, kiit.result.Result<TResponse,TFailure>) -> Event)? = null): Recorder<TRequest, TResponse, TFailure> {
             val events = when(converter) {
                 null -> null
                 else -> Events<TRequest, TResponse, TFailure>(tags ?: listOf())
@@ -88,16 +87,9 @@ open class Recorder<TRequest, TResponse, TFailure>(val id: Identity,
 
         fun log(logger:Logger, id: Identity, event: Event){
             val extra = event.fields?.fold("") { acc, info -> acc + ", ${info.first}=${info.second}" }
-            when(event.status) {
-                is Passed.Succeeded  -> logger.info ("id=${id.id}, area=${event.area}, service=${event.service}, name=${event.name}, uuid=${event.uuid}, success=true , code=${event.status.code}, desc=${event.desc} $extra")
-                is Passed.Pending    -> logger.info ("id=${id.id}, area=${event.area}, service=${event.service}, name=${event.name}, uuid=${event.uuid}, success=true , code=${event.status.code}, desc=${event.desc} $extra")
-                is Failed.Ignored    -> logger.info ("id=${id.id}, area=${event.area}, service=${event.service}, name=${event.name}, uuid=${event.uuid}, success=false, code=${event.status.code}, desc=${event.desc} $extra")
-                is Failed.Invalid    -> logger.error("id=${id.id}, area=${event.area}, service=${event.service}, name=${event.name}, uuid=${event.uuid}, success=false, code=${event.status.code}, desc=${event.desc} $extra")
-                is Failed.Denied     -> logger.error("id=${id.id}, area=${event.area}, service=${event.service}, name=${event.name}, uuid=${event.uuid}, success=false, code=${event.status.code}, desc=${event.desc} $extra")
-                is Failed.Errored    -> logger.error("id=${id.id}, area=${event.area}, service=${event.service}, name=${event.name}, uuid=${event.uuid}, success=false, code=${event.status.code}, desc=${event.desc} $extra")
-                is Failed.Unknown    -> logger.error("id=${id.id}, area=${event.area}, service=${event.service}, name=${event.name}, uuid=${event.uuid}, success=false, code=${event.status.code}, desc=${event.desc} $extra")
-                else                 -> logger.error("id=${id.id}, area=${event.area}, service=${event.service}, name=${event.name}, uuid=${event.uuid}, success=false, code=${event.status.code}, desc=${event.desc} $extra")
-            }
+            val status = event.status
+            val line = "id=${id.id}, area=${event.area}, service=${event.service}, name=${event.name}, uuid=${event.uuid}, success=${status.success}, status=${status.name}, desc=${event.desc} $extra"
+            if (status is Passed) logger.info(line) else logger.error(line)
         }
 
         fun logger(logger: Logger, id: Identity): (Event) -> Unit {

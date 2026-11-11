@@ -17,7 +17,8 @@ import kiit.apis.setup.routes
 import kiit.common.*
 import kiit.common.ext.toStringMySql
 import kiit.common.types.*
-import kiit.results.*
+import kiit.result.Success
+import kiit.result.Try
 
 // Slate Kit - App ( provides args, help, life-cycle methods, etc )
 import kiit.requests.toResponse

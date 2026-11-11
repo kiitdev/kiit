@@ -13,11 +13,11 @@ package kiit.common.args
 
 import kiit.common.lex.LexResult
 import kiit.common.lex.Lexer
-import kiit.results.Failure
-import kiit.results.Success
-import kiit.results.Try
-import kiit.results.builders.Tries
-import kiit.results.then
+import kiit.result.Failure
+import kiit.result.Success
+import kiit.result.Try
+import kiit.result.Tries
+import kiit.result.then
 
 /**
  * Parses arguments.
@@ -66,7 +66,7 @@ object ArgsService {
     private fun tokenize(line: String): Try<LexResult> {
         val result = Lexer(line).parse()
         return when (result.success) {
-            false -> Failure(Exception(result.message), msg = result.message)
+            false -> Tries.rejected(Exception(result.message))
             true -> Success(result)
         }
     }
@@ -93,7 +93,7 @@ object ArgsService {
             metaChar: String,
             sysChar: String
     ): Try<Args> {
-        return Tries.of {
+        return Tries.attempt {
 
             // if input = "area.api.action -arg1="1" -arg2="2"
             // result = "area.api.action"

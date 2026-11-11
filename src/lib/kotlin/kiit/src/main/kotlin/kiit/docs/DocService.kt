@@ -4,9 +4,9 @@ import kiit.common.*
 import kiit.utils.writer.ConsoleWriter
 import kiit.common.ext.toStringYYYYMMDD
 import kiit.common.utils.StringParser
-import kiit.results.Notice
-import kiit.results.Try
-import kiit.results.Success
+import kiit.result.Outcome
+import kiit.result.Try
+import kiit.result.Success
 import java.io.File
 
 class DocService(val rootdir: String, val outputDir: String, val templatePathRaw: String) {
@@ -63,7 +63,7 @@ class DocService(val rootdir: String, val outputDir: String, val templatePathRaw
             process(doc, pos, maxLength)
             pos += 1
         }
-        return Success(outputDir, msg = "generated docs to " + outputDir)
+        return Success(outputDir)
     }
 
 
@@ -77,7 +77,7 @@ class DocService(val rootdir: String, val outputDir: String, val templatePathRaw
             process(doc, pos, maxLength)
             pos += 1
         }
-        return Success(outputDir, msg = "generated docs to " + outputDir)
+        return Success(outputDir)
     }
 
 
@@ -91,14 +91,14 @@ class DocService(val rootdir: String, val outputDir: String, val templatePathRaw
             process(doc, pos, maxLength)
             pos += 1
         }
-        return Success(outputDir, msg = "generated docs to " + outputDir)
+        return Success(outputDir)
     }
 
 
     fun processComponent(name: String): Try<String> {
         val doc = docs.first { it.name == name }
         process(doc, 0, doc.name.length)
-        return Success(outputDir, msg = "generated docs to " + outputDir)
+        return Success(outputDir)
     }
 
 
@@ -129,7 +129,7 @@ class DocService(val rootdir: String, val outputDir: String, val templatePathRaw
     }
 
 
-    private fun fill(doc: Doc, data: Map<String, String>): Notice<String> {
+    private fun fill(doc: Doc, data: Map<String, String>): Outcome<String> {
         var template = template
         template = replace(template, "layout", data, "layout")
         template = replace(template, "name", data, "name")
@@ -159,7 +159,7 @@ class DocService(val rootdir: String, val outputDir: String, val templatePathRaw
         template = replace(template, DocConstants.examples, data, "examples")
         template = replace(template, DocConstants.notes, data, "notes")
         template = replaceWithSection("Output", template, DocConstants.output, data, "output")
-        return kiit.results.Success(template)
+        return kiit.result.Success(template)
     }
 
 
@@ -168,7 +168,7 @@ class DocService(val rootdir: String, val outputDir: String, val templatePathRaw
         data.put("output", "")
         data.put("layout", doc.layout())
         data.put("name", doc.name)
-        data.put("namelower", doc.name.toLowerCase())
+        data.put("namelower", doc.name.lowercase())
         data.put("desc", doc.desc)
         data.put("date", DateTime.now().toStringYYYYMMDD())
         data.put("version", doc.version)
@@ -213,8 +213,8 @@ class DocService(val rootdir: String, val outputDir: String, val templatePathRaw
     }
 
 
-    private fun generate(doc: Doc, data: Any, result: Notice<String>): String {
-        val fileName =  doc.name.toLowerCase() + ".md"
+    private fun generate(doc: Doc, data: Any, result: Outcome<String>): String {
+        val fileName =  doc.name.lowercase() + ".md"
         val outputPath = File(rootdir, outputDir)
         val file = File(outputPath, fileName)
         val content = result.map { content ->
@@ -224,7 +224,7 @@ class DocService(val rootdir: String, val outputDir: String, val templatePathRaw
     }
 
 
-    private fun generateReadMe(doc: Doc, data: Any, result: Notice<String>): Unit {
+    private fun generateReadMe(doc: Doc, data: Any, result: Outcome<String>): Unit {
         val fileName = if (doc.multi) "Readme_" + doc.name + ".md" else "Readme.md"
         val outputPath = docFiles.buildComponentFolder(rootdir, doc)
         val file = File(outputPath, fileName)

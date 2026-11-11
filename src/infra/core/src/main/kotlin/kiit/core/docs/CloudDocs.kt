@@ -1,6 +1,6 @@
 package kiit.core.docs
 
-import kiit.results.Outcome
+import kiit.result.Outcome
 
 
 interface CloudDocs<TEntity, TPartition, TCluster> {

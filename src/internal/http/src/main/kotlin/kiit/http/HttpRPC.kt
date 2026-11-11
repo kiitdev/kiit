@@ -5,9 +5,9 @@ import kiit.common.ext.toId
 import kiit.common.types.Content
 import kiit.common.types.ContentFile
 import kiit.common.types.ContentText
-import kiit.results.Failure
-import kiit.results.Result
-import kiit.results.Success
+import kiit.result.Failure
+import kiit.result.Result
+import kiit.result.Success
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Credentials

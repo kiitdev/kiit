@@ -6,7 +6,7 @@ import kiit.common.crypto.Secure
 import kiit.common.ext.atUtc
 import kiit.common.ext.toNumeric
 import kiit.common.ext.toStringUtc
-import kiit.results.builders.Outcomes
+import kiit.result.Outcomes
 import org.junit.Assert
 import org.junit.Test
 

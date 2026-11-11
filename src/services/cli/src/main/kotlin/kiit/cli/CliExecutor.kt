@@ -11,7 +11,8 @@
 
 package kiit.cli
 
-import kiit.results.*
+import kiit.result.*
+import kiit.codes.*
 
 /**
  * Executes a single CliRequest with hooks ( before, after )
@@ -61,8 +62,8 @@ open class CliExecutor {
             CliResponse(
                     request,
                     true,
-                    Codes.SUCCESS.name,
-                    Status.toType(Codes.SUCCESS),
+                    Passed.Succeeded.SUCCESS.name,
+                    Passed.Succeeded.SUCCESS.group,
                     0,
                     mapOf(),
                     ""

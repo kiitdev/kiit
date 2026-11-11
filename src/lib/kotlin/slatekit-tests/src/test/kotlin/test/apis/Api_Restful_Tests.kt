@@ -12,6 +12,8 @@ about: A Kotlin utility library, tool-kit and server backend.
  */
 package test.apis
 
+import kiit.codes.Passed
+import kiit.codes.CodesToHttp
 import kotlinx.coroutines.runBlocking
 import org.json.simple.JSONObject
 import org.junit.Assert
@@ -25,9 +27,9 @@ import kiit.common.*
 import kiit.context.AppContext
 import kiit.utils.naming.LowerHyphenNamer
 import kiit.utils.naming.Namer
-import kiit.results.Result
-import kiit.results.Codes
-import kiit.results.getOrElse
+import kiit.result.Result
+import kiit.codes.Codes
+import kiit.result.getOrElse
 import test.apis.samples.Sample_API_1_Core
 import test.setup.SampleRESTApi
 import test.setup.Movie
@@ -55,7 +57,7 @@ class Api_Restful_Tests : ApiTestsBase() {
         ensure("", Verb.Get, mapOf(), namer = LowerHyphenNamer(), callback = { r1 ->
 
             Assert.assertTrue(r1.success)
-            Assert.assertTrue(r1.code == Codes.SUCCESS.code)
+            Assert.assertTrue(r1.status == Passed.Succeeded.SUCCESS)
 
             val all = r1.getOrElse { Movie.samples() } as List<Movie>
             Assert.assertTrue(all.size == 2)
@@ -71,7 +73,7 @@ class Api_Restful_Tests : ApiTestsBase() {
             apis.executeAttempt("tests", "SampleREST", "1", Verb.Get, mapOf(), mapOf())
         }
         Assert.assertTrue(r1.success)
-        Assert.assertTrue(r1.code == Codes.SUCCESS.code)
+        Assert.assertTrue(r1.status == Passed.Succeeded.SUCCESS)
 
         val book = r1.getOrElse { Movie.samples()[0] } as Movie
         Assert.assertTrue(book.title == Movie.samples().first().title)
@@ -91,7 +93,7 @@ class Api_Restful_Tests : ApiTestsBase() {
         }
 
         Assert.assertTrue(r1.success)
-        Assert.assertTrue(r1.code == Codes.SUCCESS.code)
+        Assert.assertTrue(r1.status == Passed.Succeeded.SUCCESS)
         Assert.assertTrue(r1.getOrElse { "" } == "patched 1 with Indiana Jones Original")
     }
 
@@ -106,7 +108,7 @@ class Api_Restful_Tests : ApiTestsBase() {
         }
 
         Assert.assertTrue(r1.success)
-        Assert.assertTrue(r1.code == Codes.SUCCESS.code)
+        Assert.assertTrue(r1.status == Passed.Succeeded.SUCCESS)
         Assert.assertTrue(r1.getOrElse { "" } == "deleteById 1")
     }
 
@@ -121,7 +123,7 @@ class Api_Restful_Tests : ApiTestsBase() {
         }
 
         Assert.assertTrue(r1.success)
-        Assert.assertTrue(r1.code == Codes.SUCCESS.code)
+        Assert.assertTrue(r1.status == Passed.Succeeded.SUCCESS)
         Assert.assertTrue(r1.getOrElse { "" } == "activateById 1")
     }
 
@@ -152,7 +154,7 @@ class Api_Restful_Tests : ApiTestsBase() {
         }
 
         Assert.assertTrue(r1.success)
-        Assert.assertTrue(r1.code == Codes.SUCCESS.code)
+        Assert.assertTrue(r1.status == Passed.Succeeded.SUCCESS)
         Assert.assertTrue(r1.getOrElse { 0L } == 3L)
     }
 
@@ -183,7 +185,7 @@ class Api_Restful_Tests : ApiTestsBase() {
         }
 
         Assert.assertTrue(r1.success)
-        Assert.assertTrue(r1.code == Codes.SUCCESS.code)
+        Assert.assertTrue(r1.status == Passed.Succeeded.SUCCESS)
         Assert.assertTrue(r1.getOrElse { "" } == "updated 1")
     }
 

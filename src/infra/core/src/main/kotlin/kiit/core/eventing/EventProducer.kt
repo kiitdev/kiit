@@ -3,7 +3,7 @@ package kiit.core.eventing
 import kotlinx.coroutines.CompletableDeferred
 import kiit.common.Identity
 import kiit.common.Provider
-import kiit.results.Outcome
+import kiit.result.Outcome
 
 /**
  * Interface for any event producer

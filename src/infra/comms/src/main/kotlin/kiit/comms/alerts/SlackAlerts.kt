@@ -5,9 +5,9 @@ import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import kiit.http.HttpRPC
 import kiit.common.Identity
-import kiit.results.Outcome
-import kiit.results.Success
-import kiit.results.builders.Outcomes
+import kiit.result.Outcome
+import kiit.result.Success
+import kiit.result.Outcomes
 
 /**
  * @param settings: The list of slack channels
@@ -105,7 +105,7 @@ class SlackAlerts(
 //     * hook    : https://hooks.slack.com/services/T00000000/B00000000/t00000000000000000000000
 //     * payload : { ... }
 //     */
-//    private fun send(target: AlertTarget, json: String):Notice<Boolean> {
+//    private fun send(target: AlertTarget, json: String):Outcome<Boolean> {
 //        val url = "$baseUrl/${target.account}/${target.channel}/${target.key}"
 //        val result = HttpRPC().sendSync(
 //                method = HttpRPC.Method.Post,

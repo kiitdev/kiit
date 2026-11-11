@@ -12,6 +12,8 @@ about: A Kotlin utility library, tool-kit and server backend.
  */
 package test.apis
 
+import kiit.common.ext.flatten
+import kiit.codes.StatusException
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Test
@@ -20,7 +22,8 @@ import kiit.apis.*
 import kiit.apis.setup.api
 import kiit.apis.setup.routes
 import kiit.common.DateTimes
-import kiit.results.*
+import kiit.result.*
+import kiit.codes.*
 import test.apis.samples.Sample_API_1_Validation
 
 /**
@@ -43,13 +46,12 @@ class Api_Validation_Tests : ApiTestsBase() {
         }
         Assert.assertFalse(r1.success)
         r1.onFailure {
-            val ex = it as ExceptionErr
-            val err = ex.err as Err.ErrorList
-            Assert.assertEquals(4, err.errors.size)
-            Assert.assertEquals("phone", (err.errors[0] as Err.ErrorField).field)
-            Assert.assertEquals("code", (err.errors[1]  as Err.ErrorField).field)
-            Assert.assertEquals("isOn", (err.errors[2]  as Err.ErrorField).field)
-            Assert.assertEquals("date", (err.errors[3]  as Err.ErrorField).field)
+            val errors = (it as StatusException).errors.flatMap { e -> e.flatten() }
+            Assert.assertEquals(4, errors.size)
+            Assert.assertEquals("phone", (errors[0] as Err.ErrorField).field)
+            Assert.assertEquals("code", (errors[1]  as Err.ErrorField).field)
+            Assert.assertEquals("isOn", (errors[2]  as Err.ErrorField).field)
+            Assert.assertEquals("date", (errors[3]  as Err.ErrorField).field)
             println("done")
         }
     }
@@ -68,10 +70,9 @@ class Api_Validation_Tests : ApiTestsBase() {
         }
         Assert.assertFalse(r1.success)
         r1.onFailure {
-            val ex = it as ExceptionErr
-            val err = ex.err as Err.ErrorList
-            Assert.assertEquals(1, err.errors.size)
-            Assert.assertEquals("code", (err.errors[0] as Err.ErrorField).field)
+            val errors = (it as StatusException).errors.flatMap { e -> e.flatten() }
+            Assert.assertEquals(1, errors.size)
+            Assert.assertEquals("code", (errors[0] as Err.ErrorField).field)
             println("done")
         }
     }
